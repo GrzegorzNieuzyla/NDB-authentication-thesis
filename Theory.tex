@@ -1,6 +1,28 @@
 % !TeX spellcheck = pl_PL
 \chapter{Negatywne Bazy Danych - opis teoretyczny}
 \section{Opis działania}
+Główną operacja wykonywalną na NDB jest sprawdzenie czy dany rekord znajduje się w bazie. Przyjmując $U$ 
+jako oznaczenie uniwersum języka binarnego o długości $l$ a $DB$ jako zbiór wszystkich rekordów, każdy o długości $l$,
+NDB przechowuje zbiór $U - DB$ \cite{NRI-Esponda}. Takie dane są niepraktycznie do zareprezentowania w postaci nieskompresowanej z uwagi na wielkość, dlatego
+stosuje się wyrazy nad alfabetem $\{0,1,*\}$ gdzie symbol $*$ może oznaczać zarówno $0$ lub $1$ w jawnej reprezentacji bitowej.
+Każdy taki wyraz odpowiada jednemu lub wielu elementom $U - DB$ i jest sprowadzany do formuły logicznej (Tabela \ref{Tbl:NDB-logform}).
+Z założenia algorytm sprawdzający przynależność do $DB$ sprawdza czy jakakolwiek formuła z NDB jest spełniana przez dany rekord. 
+Dane znajdują się w $DB$ wtedy i tylko wtedy gdy żadna formuła nie zostanie spełniona. Taki model działania wymusza na danych stałą wielkość,
+co jednak nie stanowi problemu w przypadku przechowywania skrótów haseł które mają stałą, zależną od konkretnego algorytmu długość.
+
+\begin{table}[h]
+    \caption{Reprezentacja formuł logicznych za pomocą NDB}
+    \centering
+    \label{Tbl:NDB-logform}
+    \begin{tabular}{|l|l|}
+    	\hline
+    	rekord NDB & formuła logiczna                       \\ \hline
+    	011*       & $\neg{x_1} \land x_2 \land x_3$        \\ \hline
+    	0*01       & $\neg{x_1} \land \neg{x_3} \land x_4 $ \\ \hline
+    	111*       & $x_1 \land x_2 \land x3$               \\ \hline
+    \end{tabular}
+\end{table}
+
 \section{Zastosowanie w systemach uwierzytelniania}
 
 \section{Algorytmy generowania Negatywnych Baz Danych}
