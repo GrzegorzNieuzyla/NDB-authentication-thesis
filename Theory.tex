@@ -3,7 +3,7 @@
 \section{Opis działania}
 Główną operacja wykonywalną na NDB jest sprawdzenie czy dany rekord znajduje się w bazie. Przyjmując $U$ 
 jako oznaczenie uniwersum języka binarnego o długości $l$ a $DB$ jako zbiór wszystkich rekordów, każdy o długości $l$,
-NDB przechowuje zbiór $U - DB$ \cite{NRI-Esponda}. Takie dane są niepraktycznie do zareprezentowania w postaci nieskompresowanej z uwagi na wielkość, dlatego
+$NDB$ przechowuje zbiór $U - DB$ \cite{NRI-Esponda}. Takie dane są niepraktycznie do zareprezentowania w postaci nieskompresowanej z uwagi na wielkość, dlatego
 stosuje się wyrazy nad alfabetem $\{0,1,*\}$ gdzie symbol $*$ może oznaczać zarówno $0$ lub $1$ w jawnej reprezentacji bitowej.
 Każdy taki wyraz odpowiada jednemu lub wielu elementom $U - DB$ i jest sprowadzany do formuły logicznej (Tabela \ref{Tbl:NDB-logform}).
 Z założenia algorytm sprawdzający przynależność do $DB$ sprawdza czy jakakolwiek formuła z NDB jest spełniana przez dany rekord. 
@@ -15,16 +15,82 @@ co jednak nie stanowi problemu w przypadku przechowywania skrótów haseł któr
     \centering
     \label{Tbl:NDB-logform}
     \begin{tabular}{|l|l|}
-    	\hline
-    	rekord NDB & formuła logiczna                       \\ \hline
-    	011*       & $\neg{x_1} \land x_2 \land x_3$        \\ \hline
-    	0*01       & $\neg{x_1} \land \neg{x_3} \land x_4 $ \\ \hline
-    	111*       & $x_1 \land x_2 \land x3$               \\ \hline
+        \hline
+        rekord NDB & formuła logiczna                       \\ \hline
+        011*       & $\neg{x_1} \land x_2 \land x_3$        \\ \hline
+        0*01       & $\neg{x_1} \land \neg{x_3} \land x_4 $ \\ \hline
+        111*       & $x_1 \land x_2 \land x3$               \\ \hline
     \end{tabular}
 \end{table}
 
 \section{Zastosowanie w systemach uwierzytelniania}
+NDB może być wykorzystana w każdym systemie, gdzie podstawową operacją na danych jest sprawdzenie czy
+dany rekord znajduje się w bazie. Jednym z najpopularniejszych systemów uwierzytelniania jest metoda oparta na loginie i haśle.
+Użytkownik danej aplikacji przy zakładaniu konta podaje hasło, które następnie warstwa serwerowa danej aplikacji przechowuje jako wynik nieodwracalnej funkcji hashującej.
+
+W przypadku nieautoryzowanego dostępu do bazy danych i używanego algorytmu uzyskiwania skrótu z hasła, atakujący może uzyskać 
+wartość pierwotną mało skomplikowanych haseł za pomocą np. metody słownikowej. Modyfikując powyższy algorytm 
+składując skróty jako rekordy w NDB uniemożliwiamy iterację wszystkich danych, jednocześnie pozostawiając
+łatwy dostęp do informacji czy użytkownik o podanym loginie i haśle ma dostęp do aplikacji.
 
 \section{Algorytmy generowania Negatywnych Baz Danych}
-\subsection{Algorytmy proste}
+\subsection{Algorytm prefiksowy}
+Najprostszym ze sposobów generowania Negatywnych Baz Danych jest zaproponowany przez Fernando Esponda algorytm prefiksowy \cite{NRI-Esponda, Esponda2004EnhancingPT}. Został on opracowany w celu udowodnienia że proces generowania NDB z rekordów $DB$ jest możliwy w rozsądnej złożoności czasowej i pamięciowej.
+\\\\\\
+\begin{algorithm}[H]
+    \SetAlgoLined
+    
+    \KwData{$DB$ - zbiór rekordów do zareprezentowania w NDB, $l$ - liczba rekordów w $DB$}
+    \KwResult{Zbiór rekordów NDB}
+    $Prefix_n(V)$ - Prefiks n-znakowy rekordu $V$\\
+    $len(V)$ - Długość rekordu $V$\\
+    $W_i$ = \{\};\\
+    i = 0;\\
+    \While{i < l}{
+        $W_i$ = \{ $V_p$ $|$ $len(V_p)$ = i + 1, $V_p \notin$ \{$Prefix_{i+1}(V) | V \in DB$ \}  , $Prefix_i(V_p) \in  W_i$\}\\
+        \For{$V_p$ in $W_i$}{
+            Stwórz rekord NDB o długości $l$ którego $V_p$ jest prefiksem a na pozostałych pozycjach jest symbol $*$ i dodaj do zbioru wyjściowego
+            
+        }
+        i = i + 1;\\
+        $W_i$ = \{ $Prefix_i(V) | V \in DB$\}
+    }
+    
+    \caption{Algorytm prefiksowy}
+    \label{alg:prefix}
+\end{algorithm}
+~\\\\
+
+\begin{explanation}
+    Powyższa metoda polega na generowaniu coraz dłuższych prefiksów które nie pokrywają się ze zbiorem $DB$.
+    W ten sposób na początku tworzone są rekordy odpowiadające znacznej części $U~-~DB$. Czasami występuje potrzeba zdefiniowania pewnych rekordów explicite bez wykorzystania symbolu $*$ jeżeli każdy możliwy prefiks jest także prefiksem rekordu z $DB$. 
+    Przykładowy wynik działania znajduje się w tabeli \ref{tbl:prefix_results}.
+    
+    \begin{table}[h]
+        \centering
+        \begin{tabular}{|l|l|l|}
+            \hline
+            DB   & U - DB & NDB  \\ \hline
+            0000 & 0001   & 10** \\
+            0110 & 0011   & 010* \\
+            0010 & 0100   & 111* \\
+            1101 & 0101   & 0001 \\
+            & 0111   & 0011 \\
+            & 1000   & 0111 \\
+            & 1001   & 1100 \\
+            & 1010   &      \\
+            & 1011   &      \\
+            & 1100   &      \\
+            & 1110   &      \\
+            & 1111   &      \\ \hline
+        \end{tabular}
+        \caption{Rezultat działania algorytmu prefiksowego}
+        \label{tbl:prefix_results}
+    \end{table}
+    
+    
+\end{explanation}
+Algorytm prefiksowy jest deterministyczny i każdy powstały rekord reprezentuje unikalną, nie pokrywającą się część $U~-~DB$ \cite{NRI-Esponda}.
+Powoduje to, że algorytm uzyskiwania zbioru $DB$ z otrzymanej NDB nie wymaga sprowadzenia do problemu SAT. Wystarczy jedynie odpowiednio posortować rekordy i wyznaczyć przedziały pomiędzy nimi.
+
 \subsection{Algorytmy generujące trudne do odwrócenia Negatywne Bazy danych}
