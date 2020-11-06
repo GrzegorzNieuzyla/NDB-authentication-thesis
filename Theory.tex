@@ -49,7 +49,7 @@ Najprostszym ze sposobów generowania Negatywnych Baz Danych jest zaproponowany 
     \While{i < l}{
         $W_i$ = \{ $V_p$ $|$ $len(V_p)$ = i + 1, $V_p \notin$ \{$Prefix_{i+1}(V) | V \in DB$ \}  , $Prefix_i(V_p) \in  W_i$\}\\
         \For{$V_p$ in $W_i$}{
-            Stwórz rekord NDB o długości $l$ którego $V_p$ jest prefiksem a na pozostałych pozycjach jest symbol $*$ i dodaj do zbioru wyjściowego
+            Stwórz rekord NDB o długości $l$ którego $V_p$ jest prefiksem a na pozostałych pozycjach jest symbol $*$ i dodaj do zbioru wyjściowego NDB
             
         }
         i = i + 1;\\
@@ -93,4 +93,5 @@ Najprostszym ze sposobów generowania Negatywnych Baz Danych jest zaproponowany 
 Algorytm prefiksowy jest deterministyczny i każdy powstały rekord reprezentuje unikalną, nie pokrywającą się część $U~-~DB$ \cite{NRI-Esponda}.
 Powoduje to, że algorytm uzyskiwania zbioru $DB$ z otrzymanej NDB nie wymaga sprowadzenia do problemu SAT. Wystarczy jedynie odpowiednio posortować rekordy i wyznaczyć przedziały pomiędzy nimi.
 
-\subsection{Algorytmy generujące trudne do odwrócenia Negatywne Bazy danych}
+\subsection{Algorytm \textit{Randomize\_NDB}}
+Algorytm prefiksowy generuje poprawne rekordy NDB, jednak nie jest praktyczny w żadnych zastosowaniach związanych z bezpieczeństwem, ponieważ wynik jego działania jest stosunkowo prosto sprowadzić do postaci pozytywnej. Aby temu zaradzić, Fernando Esponda w swojej pracy\cite{NRI-Esponda} zaproponował niedeterministyczny algorytm mający na celu wprowadzić rekordy które nie odpowiadają jedynie prefiksom elementów z $U - DB$ i są znacznie trudniejsze do odwrócenia.
