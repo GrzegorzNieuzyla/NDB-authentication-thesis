@@ -17,7 +17,7 @@
 \usepackage{amsfonts}
 \usepackage{amsmath}
 \usepackage{amsthm}
-\usepackage[ruled,vlined]{algorithm2e}
+\usepackage[linesnumbered,ruled,vlined]{algorithm2e} 
 \usepackage{algorithmic}
 % --- < bibliografia > ---
 
@@ -104,6 +104,16 @@ backend=bibtex
 \usepackage{booktabs}
 \usepackage{makecell}
 \usepackage[flushleft]{threeparttable}
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks,
+    citecolor=black,
+    filecolor=black,
+    linkcolor=black,
+    urlcolor=black
+}
+
+
 
 % defines the X column to use m (\parbox[c]) instead of p (`parbox[t]`)
 \newcolumntype{C}[1]{>{\hsize=#1\hsize\centering\arraybackslash}X}
@@ -149,6 +159,8 @@ backend=bibtex
 %---------------------------------------------------------------------------
 \setcounter{secnumdepth}{4}
 \brokenpenalty=10000\relax
+
+
 
 \begin{document}
     
