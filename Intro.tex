@@ -1,14 +1,19 @@
 % !TeX spellcheck = pl_PL
 \chapter{Wprowadzenie}
 \section{Cele pracy}
-Celem niniejszej pracy jest implementacja i przetestowanie systemu uwierzytelniania oferującego większe bezpieczeństwo
-niż standardowy schemat generowania skrótu hasła za pomocą funkcji generacji klucza (np. PBKDF2, bcrypt) i przechowywaniu 
-w standardowej (pozytywnej) bazie danych.
+Celem niniejszej pracy jest implementacja i~przetestowanie systemu uwierzytelniania oferującego większe bezpieczeństwo
+niż standardowy schemat generowania skrótu hasła za pomocą funkcji generacji klucza (np. \textit{PBKDF2}, \textit{bcrypt})
+i~przechowywaniu w~standardowej (pozytywnej) bazie danych.
 
-Założeniem systemu jest zamienienie reprezentacji w sposób jawny na Negatywną Bazę Danych (NDB) co pozwoli dodać dodatkową warstwę bezpieczeństwa
-która znacząco utrudni uzyskanie haseł użytkownika w przypadku wykradzenia bazy danych.
+Założeniem systemu jest zamienienie reprezentacji w~sposób jawny na Negatywną Bazę Danych ($NDB$) co pozwoli dodać 
+dodatkową warstwę bezpieczeństwa która znacząco utrudni uzyskanie haseł użytkownika w~przypadku wykradzenia bazy danych.
 
-Rezultatem wyjściowym algorytmów generacji NDB jest zbiór formuł logicznych, dlatego przeprowadzone zostały testy z wykorzystaniem solwerów SAT mające na celu zasymulowanie ataku na powstałą NDB.
+W~tym celu opisałem różne algorytmy prezentowane w~dostępnej literaturze, przedstawiłem schemat ich działania i~porównałem
+je pod względem bezpieczeństwa. 
+
+Rezultatem wyjściowym algorytmów generacji NDB jest zbiór ciągów tekstowych, które można jednoznacznie sprowadzić 
+do zbioru formuł logicznych CNF, dlatego przeprowadzone zostały testy z~wykorzystaniem solwerów SAT mające na celu 
+zasymulowanie ataku na powstałą NDB.
 
 \section{Zawartość pracy}
 

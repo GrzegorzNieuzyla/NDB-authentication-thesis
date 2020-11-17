@@ -1,19 +1,19 @@
 % !TeX spellcheck = pl_PL
 \chapter{Negatywne Bazy Danych - opis teoretyczny}
 \section{Opis działania}
-Główną operacja wykonywalną na NDB jest sprawdzenie czy dany rekord znajduje się w bazie. Przyjmując $U$ 
-jako oznaczenie uniwersum języka binarnego o długości $l$ a $DB$ jako zbiór wszystkich rekordów, każdy o długości $l$,
-$NDB$ przechowuje zbiór $U - DB$ \cite{NRI-Esponda}. Takie dane są niepraktycznie do zareprezentowania w postaci nieskompresowanej z uwagi na wielkość, dlatego
+Główną operacja wykonywalną na $NDB$ jest sprawdzenie czy dany rekord znajduje się w bazie. Przyjmując $U$ 
+jako oznaczenie uniwersum języka binarnego o~długości $l$ a $DB$ jako zbiór wszystkich rekordów, każdy o~długości $l$,
+$NDB$ przechowuje zbiór $U - DB$ \cite{NRI-Esponda}. Takie dane są niepraktycznie do zareprezentowania w postaci nieskompresowanej z~uwagi na wielkość, dlatego
 stosuje się wyrazy nad alfabetem $\{0,1,*\}$ gdzie symbol $*$ może oznaczać zarówno $0$ lub $1$ w jawnej reprezentacji bitowej.
-Pozycje na których znajduje się wartość $0$ lub $1$ są \textit{ustalone} a z wartością $*$ - \textit{nieustalone}.
+Pozycje na których znajduje się wartość $0$ lub $1$ są \textit{ustalone} a z~wartością $*$ - \textit{nieustalone}.
 
-Każdy taki wyraz odpowiada jednemu lub wielu elementom $U - DB$ i jest sprowadzany do formuły logicznej (Tabela \ref{Tbl:NDB-logform}).
-Z założenia algorytm sprawdzający przynależność do $DB$ sprawdza czy jakakolwiek formuła z NDB jest spełniana przez dany rekord. 
-Dane znajdują się w $DB$ wtedy i tylko wtedy gdy żadna formuła nie zostanie spełniona. 
+Każdy taki wyraz odpowiada jednemu lub wielu elementom $U - DB$ i~jest sprowadzany do formuły logicznej (Tabela \ref{Tbl:NDB-logform}).
+Z założenia algorytm sprawdzający przynależność do $DB$ sprawdza czy jakakolwiek formuła z~$NDB$ jest spełniana przez dany rekord. 
+Dane znajdują się w $DB$ wtedy i~tylko wtedy gdy żadna formuła nie zostanie spełniona. 
 
 Taki model działania wymusza na danych stałą wielkość,
 co jednak nie stanowi problemu w przypadku przechowywania skrótów haseł które mają stałą, zależną od konkretnego algorytmu długość.
-Dla danych o zmiennych rozmiarach (np. nazwy użytkownika) można zastosować funkcję hashującą lub algorytmy zwiększające długość ciągu bitowego do stałej wartości typu PKCS\#5 lub PKCS\#7.
+Dla danych o~zmiennych rozmiarach (np. nazwy użytkownika) można zastosować funkcję hashującą lub algorytmy zwiększające długość ciągu bitowego do stałej wartości typu PKCS\#5 lub PKCS\#7.
 Należy jednak pamiętać, że zwiększenie długości rekordu znacznie wydłuża czas generacji bazy oraz zajmowaną pamięć. 
 
 \begin{table}[h]
@@ -31,18 +31,20 @@ Należy jednak pamiętać, że zwiększenie długości rekordu znacznie wydłuż
 
 \section{Zastosowanie w systemach uwierzytelniania}
 NDB może być wykorzystana w każdym systemie, gdzie podstawową operacją na danych jest sprawdzenie czy
-dany rekord znajduje się w bazie. Jednym z najpopularniejszych systemów uwierzytelniania jest metoda oparta na loginie i haśle.
+dany rekord znajduje się w bazie. Jednym z~najpopularniejszych systemów uwierzytelniania jest metoda oparta na loginie i~haśle.
 Użytkownik danej aplikacji przy zakładaniu konta podaje hasło, które następnie warstwa serwerowa danej aplikacji przechowuje jako wynik nieodwracalnej funkcji hashującej.
 
-W przypadku nieautoryzowanego dostępu do bazy danych i używanego algorytmu uzyskiwania skrótu z hasła, atakujący może uzyskać 
+W przypadku nieautoryzowanego dostępu do bazy danych i~używanego algorytmu uzyskiwania skrótu z~hasła, atakujący może uzyskać 
 wartość pierwotną mało skomplikowanych haseł za pomocą np. metody słownikowej. Modyfikując powyższy algorytm 
 składując skróty jako rekordy w NDB uniemożliwiamy iterację wszystkich danych, jednocześnie pozostawiając
-łatwy dostęp do informacji czy użytkownik o podanym loginie i haśle ma dostęp do aplikacji.
+łatwy dostęp do informacji czy użytkownik o~podanym loginie i~haśle ma dostęp do aplikacji.
 
 \section{Algorytmy generacji Negatywnych Baz Danych}
 \subsection{Algorytm prefiksowy}
 \label{sec:prefix-alg}
-Najprostszym ze sposobów generowania Negatywnych Baz Danych jest zaproponowany przez Fernando Esponda algorytm prefiksowy \cite{NRI-Esponda, Esponda2004EnhancingPT}. Został on opracowany w celu udowodnienia że proces generowania NDB z rekordów $DB$ jest możliwy w rozsądnej złożoności czasowej i pamięciowej.
+Najprostszym ze sposobów generowania Negatywnych Baz Danych jest zaproponowany przez Fernando Esponda 
+algorytm prefiksowy \cite{NRI-Esponda, Esponda2004EnhancingPT}. Został on opracowany w celu udowodnienia
+że proces generowania NDB z~rekordów $DB$ jest możliwy w~rozsądnej złożoności czasowej i~pamięciowej.
 \\\\\\
 \begin{algorithm}[H]
     \SetAlgoLined
@@ -54,9 +56,9 @@ Najprostszym ze sposobów generowania Negatywnych Baz Danych jest zaproponowany 
     $W_i$ = \{\};\\
     i = 0;\\
     \While{i < l}{
-        $W_{i+1}$ = Zbiór wszystkich $i+1$-znakowych ciągów bitowych $V_p$ nie będących prefiksem żadnego rekordu $DB$ i dla których $Prefix_i(V_p) \in W_i$\\
-        \For{$V_p$ in $W_{i+1}$}{
-            Stwórz rekord NDB o długości $l$ którego $V_p$ jest prefiksem a na pozostałych pozycjach jest symbol $*$ i dodaj do zbioru wyjściowego NDB
+        $W_{i+1}$ = Zbiór wszystkich $i+1$-znakowych ciągów bitowych $V_p$ nie będących prefiksem żadnego rekordu $DB$ i~dla których $Prefix_i(V_p) \in W_i$\\
+        \ForEach{$V_p$ in $W_{i+1}$}{
+            Stwórz rekord NDB o~długości $l$ którego $V_p$ jest prefiksem a na pozostałych pozycjach jest symbol $*$ i~dodaj do zbioru wyjściowego NDB
             
         }
         i = i + 1;\\
@@ -70,7 +72,7 @@ Najprostszym ze sposobów generowania Negatywnych Baz Danych jest zaproponowany 
 
 
 Powyższa metoda polega na generowaniu coraz dłuższych prefiksów które nie pokrywają się ze zbiorem $DB$.
-W ten sposób na początku tworzone są rekordy odpowiadające znacznej części $U~-~DB$. Czasami występuje potrzeba zdefiniowania pewnych rekordów explicite bez wykorzystania symbolu $*$ jeżeli każdy możliwy prefiks jest także prefiksem rekordu z $DB$. 
+W ten sposób na początku tworzone są rekordy odpowiadające znacznej części $U~-~DB$. Czasami występuje potrzeba zdefiniowania pewnych rekordów explicite bez wykorzystania symbolu $*$ jeżeli każdy możliwy prefiks jest także prefiksem rekordu z~$DB$. 
 Przykładowy wynik działania znajduje się w tabeli \ref{tbl:prefix_results}.
 
 \begin{table}[h]
@@ -97,37 +99,41 @@ Przykładowy wynik działania znajduje się w tabeli \ref{tbl:prefix_results}.
 
 
 
-Algorytm prefiksowy jest deterministyczny i każdy powstały rekord reprezentuje unikalną, nie pokrywającą się część $U~-~DB$ \cite{NRI-Esponda}.
-Powoduje to, że algorytm uzyskiwania zbioru $DB$ z otrzymanej NDB nie wymaga sprowadzenia do problemu SAT. Wystarczy jedynie odpowiednio posortować rekordy i wyznaczyć przedziały pomiędzy nimi.
+Algorytm prefiksowy jest deterministyczny i~każdy powstały rekord reprezentuje unikalną, nie pokrywającą się część $U~-~DB$ \cite{NRI-Esponda}.
+Powoduje to, że algorytm uzyskiwania zbioru $DB$ z~otrzymanej $NDB$ nie wymaga sprowadzenia do problemu SAT. Wystarczy jedynie odpowiednio posortować rekordy i~wyznaczyć przedziały pomiędzy nimi.
 
-Czas wykonywania procedury wynosi $O(l|DB|)$, jednak w przypadku zapisywania wyniku do bazy wzrasta do $O(l^2|DB|)$ gdyż konieczna jest serializacja każdego rekordu.
-Złożoność obliczeniowa dla optymalnej implementacji wynosi $O(l|DB|)$ w przypadku gdy poprzednio generowane rekordy NDB nie są przetrzymywane w pamięci. 
+Czas wykonywania procedury wynosi $O(l|DB|)$, jednak w~przypadku zapisywania wyniku do bazy wzrasta do $O(l^2|DB|)$ gdyż konieczna jest serializacja każdego rekordu.
+Złożoność obliczeniowa dla optymalnej implementacji wynosi $O(l|DB|)$ w~przypadku gdy poprzednio generowane rekordy $NDB$ nie są przetrzymywane w~pamięci. 
 Dla danego zbioru $DB$ generowane jest $O(l|DB|)$ rekordów co sprowadza się do wielkości powstałej bazy danych wynoszącej $O(l^2|DB|)$.
 \subsection{Algorytm \textit{Randomize\_NDB}}
-Algorytm prefiksowy generuje poprawne rekordy NDB, jednak nie jest praktyczny w żadnych zastosowaniach związanych z bezpieczeństwem, ponieważ wynik jego działania jest stosunkowo prosto sprowadzić do postaci pozytywnej. Aby temu zaradzić, Fernando Esponda w swojej pracy\cite{NRI-Esponda} zaproponował niedeterministyczny algorytm mający na celu wprowadzić rekordy które nie odpowiadają jedynie prefiksom elementów z $U - DB$ i są trudniejsze do odwrócenia.
+Algorytm prefiksowy generuje poprawne rekordy $NDB$, jednak nie jest praktyczny w~żadnych zastosowaniach związanych
+z~bezpieczeństwem, ponieważ wynik jego działania jest stosunkowo prosto sprowadzić do postaci pozytywnej. 
+Aby temu zaradzić, Fernando Esponda w~swojej pracy\cite{NRI-Esponda} zaproponował 
+niedeterministyczny algorytm mający na celu wprowadzić rekordy które nie odpowiadają jedynie prefiksom elementów
+z $U - DB$ i~są trudniejsze do odwrócenia.
 
 \begin{algorithm}[H]
     \SetAlgoLined
     
-    \KwData{$DB$ - zbiór rekordów do zareprezentowania w NDB, $l$ - liczba rekordów w $DB$}
+    \KwData{$DB$ - zbiór rekordów do zareprezentowania w~NDB, $l$ - liczba rekordów w~$DB$}
     \KwResult{Zbiór rekordów NDB}
     $Prefix_n(V)$ - Prefiks n-znakowy rekordu $V$\\
     $len(V)$ - Długość rekordu $V$\\
-    $\pi$ = losowa permutacja o długości $|V_{pe}|$\\
+    $\pi$ = losowa permutacja o~długości $|V_{pe}|$\\
     $W_i$ = zbiór wszystkich ciągów $l$-bitowych\\
     $\pi(DB)$ $\equiv$ $\{\pi(V) ~|~ V \in DB\}$\\
     $i$ = $\left \lceil{log_2(l)}\right \rceil$;\\
     \While{$i < l$ \textbf{and} $W_i \neq \emptyset $}{
-        $W_{i+1}$ = Zbiór wszystkich $i+1$-znakowych ciągów bitowych $V_p$ nie będących prefiksem żadnego rekordu $\pi(DB)$ i dla których $Prefix_i(V_p) \in W_i$\\
-        \For{$V_p$ \textbf{in} $W_{i+1}$}{
+        $W_{i+1}$ = Zbiór wszystkich $i+1$-znakowych ciągów bitowych $V_p$ nie będących prefiksem żadnego rekordu $\pi(DB)$ i~dla których $Prefix_i(V_p) \in W_i$\\
+        \ForEach{$V_p$ \textbf{in} $W_{i+1}$}{
             Dopełnij $V_p$ do długości $l$ wstawiając znaki nieustalone '$*$' na końcu\\ 
-            $j$ = losowa liczba z przedziału $[1, l]$\\
+            $j$ = losowa liczba z~przedziału $[1, l]$\\
             \For{$k = 1$ \textbf{to} $j$}
             {
-                $n$ = losowa liczba z przedziału $[1, log_2(l)]$\\
-                $P$ = $n$ losowych nieustalonych pozycji z $V_p$\\  
+                $n$ = losowa liczba z~przedziału $[1, log_2(l)]$\\
+                $P$ = $n$ losowych nieustalonych pozycji z~$V_p$\\  
                 $X$ = Zbiór rekordów powstałych przez zastąpienie pozycji $\in P$ przez wszystkie możliwe kombinacje bitowe ($2^n$ rekordów)\\
-                \For{$V_q$ \textbf{in} $X$}
+                \ForEach{$V_q$ \textbf{in} $X$}
                 {
                     $V_{pg}$ = Pattern\_Generate($\pi(DB)$, $V_q$)\\
                     Dodaj $\pi^{-1}(V_{pg})$ do zbioru rekordów wyjsciowych\\
@@ -139,43 +145,43 @@ Algorytm prefiksowy generuje poprawne rekordy NDB, jednak nie jest praktyczny w 
         $i = i + 1$\\
         $W_i$ = Zbiór wszystkich $i$-znakowych prefiksów rekordów $DB$
     }    
-    \caption{Algorytm Randomize\_NDB}
+    \caption{Algorytm \textit{Randomize\_NDB}}
     \label{alg:randomize}
 \end{algorithm}
 ~\\\\
-Algorytm ten działa na podobnej zasadzie co algorytm prefiksowy (rozdział \ref{sec:prefix-alg}) z pewnymi modyfikacjami.
-Na początku kolejność bitów w $DB$ jest mieszana za pomocą losowej permutacji aby pozycje zdefiniowane w generowanej prefiksowej $NDB$ nie były skumulowane na początku wyrazów. Następnie dla każdego powstałego negatywnego rekordu losuje się $n$ pozycji nieustalonych i zastępuje się go równoznacznym zbiorem rekordów które mają te pozycje ustalone. 
-Powstałe ciągi są dodatkowo obfuskowane przez wstawienie na losowych pozycjach zamiast bitu zdefiniowanego znak $*$ zgodnie z algorytmem \textit{Pattern\_Generate}.
+Algorytm ten działa na podobnej zasadzie co algorytm prefiksowy (rozdział \ref{sec:prefix-alg}) z~pewnymi modyfikacjami.
+Na początku kolejność bitów w~$DB$ jest mieszana za pomocą losowej permutacji aby pozycje zdefiniowane w~generowanej prefiksowej $NDB$ nie były skumulowane na początku wyrazów. Następnie dla każdego powstałego negatywnego rekordu losuje się $n$ pozycji nieustalonych i~zastępuje się go równoznacznym zbiorem rekordów które mają te pozycje ustalone. 
+Powstałe ciągi są dodatkowo obfuskowane przez wstawienie na losowych pozycjach zamiast bitu zdefiniowanego znak $*$ zgodnie z~algorytmem \textit{Pattern\_Generate}.
 
-Wynik algorytmu jest niedeterministyczny co powoduje że dla takich samych zbiorów $DB$ rezultat może się różnić. Generacja wielu redundentnych rekordów zwiększa odporność otrzymanej bazy na próby przywrócenia do postaci pozytywnej, jednak wiąże się to z ze zwiększeniem objętości NDB średnio $\frac{l^2}{2}$ razy w stosunku do algorytmu prefiksowego.
+Wynik algorytmu jest niedeterministyczny co powoduje że dla takich samych zbiorów $DB$ rezultat może się różnić. Generacja wielu redundantnych rekordów zwiększa odporność otrzymanej bazy na próby przywrócenia do postaci pozytywnej, jednak wiąże się to z~ze zwiększeniem objętości NDB średnio $\frac{l^2}{2}$ razy w~stosunku do algorytmu prefiksowego.
 
 
 \begin{algorithm}[!htb]
     \SetAlgoLined
     
-    \KwData{$DB$ - zbiór rekordów do zareprezentowania w NDB, $V_{pe}$ - rekord NDB do zobfuskowania}
+    \KwData{$DB$ - zbiór rekordów do zareprezentowania w~NDB, $V_{q}$ - rekord NDB do zobfuskowania}
     \KwResult{Zobfuskowany rekord NDB}
-    $\pi$ = losowa permutacja o długości $|V_{pe}|$\\
+    $\pi$ = losowa permutacja o~długości $|V_{pe}|$\\
     $SIV$ = \{\} // wektor zmienionych bitów\\
-    \For{$i = 1$ to $|V_{pe}|$}
+    \For{$i = 1$ to $|V_{q}|$}
     {
-        $\pi(V_{pe})'$ = $\pi(V_{pe})$ z elementem o indeksie $i$ zamienionym na symbol $*$\\
-        \If{istnieje rekord w $DB$ pokrywający się z $\pi(V_{pe})'$}
+        $\pi(V_{q})'$ = $\pi(V_{q})$ z~elementem o~indeksie $i$ zamienionym na symbol $*$\\
+        \If{istnieje rekord w $DB$ pokrywający się z~$\pi(V_{q})'$}
         {
-            Dodaj $i$ i bit o indeksie $i$ do $SIV$\\
-            $\pi(V_{pe}) = \pi(V_{pe})'$\\
+            Dodaj $i$ i bit o~indeksie $i$ do $SIV$\\
+            $\pi(V_{q}) = \pi(V_{q})'$\\
         }  
     }
-    $t =$ losowa liczba z przedziału $[0, |SIV|]$\\
+    $t =$ losowa liczba z~przedziału $[0, |SIV|]$\\
     \uIf{$t > |SIV|$}
     {
         $R = SIV$
     }
     \Else
     {
-        $R = t$ losowych bitów z $SIV$ 
+        $R = t$ losowych bitów z~$SIV$ 
     }
-    $V_k$ = $\pi(V_{pe})$\\
+    $V_k$ = $\pi(V_{q})$\\
     \For{$indeks$, $bit$ in $R$}
     {
         $V_k$[$indeks$] = $bit$
@@ -189,11 +195,11 @@ Wynik algorytmu jest niedeterministyczny co powoduje że dla takich samych zbior
 
 \newpage
 Zmiany względem algorytmu prefiksowego oraz procedura \textit{Pattern\_Generate} gwarantują że żaden ze zmodyfikowanych rekordów nie będzie odpowiadał żadnemu elementowi $DB$ oraz że wynik działania pozostanie kompletnym odzwierciedleniem $U - DB$,
-ponieważ każda modyfikacja rekordu rozszerza zakres pokrywanych ciągów wprowadzając redundentne informacje.
-W \cite{NRI-Esponda} przedstawiony jest dowód że problem rekonstrukcji $DB$ z $NDB$ jest NP-trudny (każdą instancję 3-SAT można sprowadzić do $NDB$).
+ponieważ każda modyfikacja rekordu rozszerza zakres pokrywanych ciągów wprowadzając redundantne informacje.
+W \cite{NRI-Esponda} przedstawiony jest dowód że problem rekonstrukcji $DB$ z~$NDB$ jest NP-trudny (każdą instancję 3-SAT można sprowadzić do $NDB$).
 
 Powyższy algorytm w teorii jest zdolny do tworzenia trudnych instancji, ale nie posiada żadnych mechanizmów umożliwiających ingerencję w jego działanie - wynik jest zawsze losowy.
-W praktyce powoduje to, że można oczekiwać, że wynikowa NDB może być odwrócona niemal natychmiast przez współczesne solwery SAT, co pokazuję w dalszych rozdziałach.       
+W praktyce powoduje to, że można oczekiwać, że wynikowa $NDB$ może być odwrócona niemal natychmiast przez współczesne solwery SAT, co pokazuję w dalszych rozdziałach.       
 
 
 \begin{table}[!htb]
@@ -219,9 +225,10 @@ W praktyce powoduje to, że można oczekiwać, że wynikowa NDB może być odwr�
 \end{table}
 
 \newpage
-\subsection{Algorytm 0-Hidden}
+\subsection{Algorytm \textit{0-Hidden}}
+\label{sec:0hidden}
 Następujące algorytmy powstały przez zastosowanie procedur generowania trudnych instancji SAT.
-Jedną z nich jest \textbf{0-Hidden} służąca do generacji formuł 3-SAT nie posiadających rozwiązania, co pozwala na testowanie solwerów 
+Jedną z~nich jest \textbf{0-Hidden} służąca do generacji formuł 3-SAT nie posiadających rozwiązania, co pozwala na testowanie solwerów 
 pod względem wykrywania braku spełnialności \cite{GeneratingHardFormulasByHidingSolutionsDeceptively}.
 
  ~\\\\
@@ -236,31 +243,132 @@ pod względem wykrywania braku spełnialności \cite{GeneratingHardFormulasByHid
      \While{$|W| \neq n$}
      {
          Wybierz 3 losowe zmienne\\
-         Stwórz klauzulę 3CNF używając wylosowane zmienne, z losowymi znakami\\
+         Stwórz klauzulę 3CNF używając wylosowane zmienne, z~losowymi znakami\\
          Dodaj klauzulę do zbioru wynikowego $W$
      } 
      
-     \caption{Algorytm 0-Hidden}
+     \caption{Algorytm \textit{0-Hidden}}
      \label{alg:0hidden}
  \end{algorithm}
  ~\\\\
-Powyższy algorytm generuje formułę CNF, która z dużym prawdopodobieństwem nie jest spełnialna i jest trudna do rozwiązania przez solwery SAT \cite{GeneratingHardFormulasByHidingSolutionsDeceptively, HidingSatisfyingAssignmentsTwoAreBetterThanOne}.
+Powyższy algorytm generuje formułę CNF, która z~dużym prawdopodobieństwem nie jest spełnialna i~jest trudna do rozwiązania przez solwery SAT \cite{GeneratingHardFormulasByHidingSolutionsDeceptively, HidingSatisfyingAssignmentsTwoAreBetterThanOne}.
 Modyfikując parametr $r$ możemy wpłynąć na rozmiar formuły, wartość $r \approx 4.27$ jest wartością graniczną powyżej której problem prawie na pewno nie ma rozwiązania \cite{GeneratingHardFormulasByHidingSolutionsDeceptively}.
 
 Z perspektywy Negatywnych Baz Danych można przyjąć że powstała formuła odpowiada zbiorowi $U - DB$, jeśli $DB$ jest zbiorem pustym.
 
-\subsection{Algorytmy 1-Hidden i 2-Hidden}
-Algorytmy \textbf{1-Hidden} i \textbf{2-Hidden} są skontruowane podobnie jak 0-Hidden, z tą różnicą, że formuła wyjściowa ma odpowiednio co najmniej (i w znacznej większości dokładnie) jedno lub dwa rozwiązania.  
+\subsection{Algorytmy \textit{1-Hidden} i \textit{2-Hidden}}
+\label{sec:12hidden}
+Algorytmy \textit{\textbf{1-Hidden}} i~\textit{\textbf{2-Hidden}} są skonstruowane podobnie jak \textit{0-Hidden}, z~tą różnicą, że formuła wyjściowa ma odpowiednio co najmniej (i w znacznej większości dokładnie) jedno lub dwa rozwiązania.  
  
-W celu testowania możliwości solwerów SAT co do znajdowania przypisania spełniającego daną formułę można generować losowe formuły (alg. \ref{alg:0hidden}) i odrzucać klauzule które
-przeczą ukrytemu rozwiązaniu $A$ (1-Hidden). Jednak spowoduje to, że rozkład losowy zostanie zaburzony i solwery mogą to "poczuć", co doprowadzi je do ukrytego rozwiązania \cite{HidingSatisfyingAssignmentsTwoAreBetterThanOne}.
+W celu testowania możliwości solwerów SAT co do znajdowania przypisania spełniającego daną formułę można generować losowe formuły (alg. \ref{alg:0hidden}) i~odrzucać klauzule które
+przeczą ukrytemu rozwiązaniu $A$ (\textit{1-Hidden}). Jednak spowoduje to, że rozkład losowy zostanie zaburzony i~solwery mogą to \enquote{poczuć}, co doprowadzi je do ukrytego rozwiązania \cite{HidingSatisfyingAssignmentsTwoAreBetterThanOne}.
     
-Aby temu przeciwdziałać można jednocześnie ukryć przypisania $A$ oraz $\neg A$ (2-Hidden), co spowoduje że algorytm przeszukujący będzie równoważnie "przyciągany" przez dwa przeciwne rozwiązania.
+Aby temu przeciwdziałać można jednocześnie ukryć przypisania $A$ oraz $\neg A$ (\textit{2-Hidden}), co spowoduje że algorytm przeszukujący będzie równoważnie \enquote{przyciągany} przez dwa przeciwne rozwiązania.
 
-Powyższy schemat działania jest wykorzystany w procedurze \textbf{Q-Hidden} będącej rozszerzeniem tego konceptu.
-
-
-\subsection{Algorytm Q-Hidden}
+Powyższy schemat działania jest wykorzystany w procedurze \textit{\textbf{Q-Hidden}} będącej rozszerzeniem tego konceptu.
 
 
+\subsection{Algorytm \textit{Q-Hidden}}
+  Metoda \textit{\textbf{Q-Hidden}} do generacji trudnych formuł K-SAT zaproponowana w \cite{GeneratingHardFormulasByHidingSolutionsDeceptively} rozszerza możliwości algorytmów z~rozdziałów \ref{sec:0hidden} i~\ref{sec:12hidden}
+  przez dodanie parametru prawdopodobieństwa $q$ $\in (0, 1)$. Każda wygenerowana klauzula składa się z~$k$ zmiennych których przypisanie pokrywa się z~$t > 0$ literałów z~prawdopodobieństwem $q^t$ (gdzie $t$ to numer kolejnego zgodnego literału).
+  Oznacza to że im mniejsza wartość $q$ tym bardziej formuła będzie wskazywać w przeciwnym kierunku niż ukryte rozwiązanie $A$. 
+  
+  Na podstawie tego schematu powstał algorytm mający na celu rozwiązanie problemów z~algorytmami prefiksowym i~Randomize\_NDB tj. generowanie zbiorów rekordów które łatwo odwrócić za pomocą solwerów SAT\cite{HARD-NDB}
+\\\\\\
+ \begin{algorithm}[H]
+    \SetAlgoLined
+    
+    \KwData{$s$ - ciąg bitowy, $l$ - liczba zmiennych, $r$ - wsp. ilości klauzul\\ $k$ - ilość określonych bitów w klauzuli, $q$ - wsp. prawdopodobieństwa}
+    \KwResult{Zbiór rekordów NDB}
+    
+    $n = l * r$\\
+    $NDB = \{\}$\\
+    \While{$|NDB| \neq n$}
+    {
+        $\Upsilon$ = $k$ różnych losowych pozycji w przedziale $[1, l]$\\
+        $V$ = rekord $NDB$ o~długości $l$ wypełniony znakami '$*$'\\
+        \ForEach{$i$ \textbf{in} $\Upsilon$}
+        {
+            $V$[$i$] = $s$[$i$]
+        }
+        $d$ = 0\\
+        \While{$d \neq 1$}
+        {
+            \ForEach{$i$ \textbf{in} $\Upsilon$}
+            {
+                $p$ = losowa liczba rzeczywista z~przedziału $[0, 1]$\\ 
+                \If{$q > p$}
+                {
+                    $V$[$i$] = $\neg V$[$i$]\\
+                    $d = 1$
+                }
+            }    
+        }
+        
+    
+        Dodaj rekord $V$ do $NDB$
+    } 
+    
+    \caption{Algorytm \textit{Q-Hidden}}
+    \label{alg:qhidden}
+\end{algorithm}
+
+
+W~przeciwieństwie do poprzednich metod, za pomocą algorytmu \textit{Q-Hidden} przy zastosowaniu odpowiednich
+parametrów $q$, $r$ i~$k$ jest możliwe praktycznie stworzenie instancji $NDB$ rozwiązywalnych przez solwery SAT 
+w~czasie potęgowym tj. przez całkowite przeszukanie, co powoduje że dla odpowiednio dużych $l$ odzyskanie 
+zabezpieczonego ciągu jest niepraktyczne.
+
+Takie podejście do problemu powoduje szereg konsekwencji. Pierwszą z~nich jest to że wielkość otrzymanej bazy
+nie zależy od przechowywanego rekordu i~można ją kontrolować za pomocą parametru $r$ 
+- generowane jest dokładnie $l * r$ rekordów. Nie ma jednak możliwości zawarcia w jednej instancji $NDB$ 
+więcej niż jednego ciągu bitowego - można zakodować jedynie zero lub jeden rekord.
+
+W~\cite{HARD-NDB} razem z~przedstawieniem algorytmu \ref{alg:qhidden} opisany jest przykładowe zastosowanie tego schematu 
+w~systemach rzeczywistych wymagających znacznie większych ilości danych. Polega na przechowywaniu zbioru osobnych $NDB$ 
+dla każdego pozytywnego rekordu. Metoda zapytania do tak skonstruowanej bazy polega na sprawdzeniu po kolei wszystkich pojedynczych $NDB$.
+Jeżeli rekord nie pokrywa się z~żadną formułą w jakiejkolwiek pod-bazie to przyjmuje się że znajduje się w~bazie głównej.
+
+Negatywne Bazy Danych nie przechowujące żadnych danych okazują się przydatne w~takim rozwiązaniu ponieważ \enquote{puste} bazy stworzone
+przez algorytm \textit{0-Hidden} (zmodyfikowany w celu generowania formuł o~wymaganej liczbie literałów w~klauzuli) są nierozróżnialne
+od tych wygenerowanych przez algorytm \textit{Q-Hidden}. Pozwala to na ukrycie liczby rekordów pozytywnych.
+
+\begin{table}[!tb]
+    \centering
+    \begin{tabular}{|lll|}
+        \hline
+        \multicolumn{3}{|c|}{NDB} \\ \hline
+        *10*1 & 11**0 & **100 \\
+        11**0 & **100 & *000* \\
+        **100 & *000* & 0*01* \\
+        *000* & 0*01* & *0*01 \\
+        0*01* & *0*01 & 01*1* \\
+        *0*01 & 01*1* & 1*0*1 \\
+        01*1* & 1*0*1 & 1**01 \\
+        \hline
+    \end{tabular}
+    \caption{Rezultat działania algorytmu \textit{Q-Hidden} dla ciągu bitowego $10010$ przy parametrach $k=3$, $q=0.5$ i~$r=4.2$}
+    \label{tbl:qhidden_results}
+\end{table}
+
+
+Istotnym problemem jest fakt, że nie ma gwarancji, że rezultat działania tego algorytmu będzie pokrywał cały zbiór $U - \{s\}$,
+nawet powyżej wartości granicznej $r \approx 4.27$. Jedną z opcji jest dalsze zwiększenie parametru $r$ żeby jeszcze 
+bardziej zmniejszyć prawdopodobieństwo zawarcia nadmiarowych ciągów, ale wprowadza to dodatkowe, redundantne informacje co powoduje
+że czas potrzebny na odwrócenie $NDB$ maleje. Dlatego wskazane jest  ustawienie niskiej wartości $r$ i~dodanie do każdego rekordu 
+dodatkowej informacji wskazującej na jego poprawność np. bitu parzystości, kodu CRC lub wyniku funkcji skrótu.
+W takiej sytuacji prawdopodobieństwo wystąpienia niechcianych danych maleje $2^{c}$-krotnie, gdzie $c$ oznacza liczbę dodatkowych bitów.
+
+Rozkład wartości nadmiarowych ciągów bitowych nie jest jednostajny - dodatkowe wystąpienia będą bliskie $s$ w odległości Hamminga
+(tj. poszczególne bity będą się różniły w niewielkiej ilości), dlatego metoda CRC maksymalizująca odległość Hamminga 
+dla podobnych napisów może być szczególnie efektywna. \cite{HARD-NDB}
+
+Porównanie poszczególnych metod przedstawiam w rozdziale \ref{sec:red-str-test}.
+
+\subsection{Algorytm \textit{K-Hidden}}
+
+
+
+
+\subsection{Algorytm hybrydowy}
 
