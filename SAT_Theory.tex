@@ -1,7 +1,96 @@
 % !TeX spellcheck = pl_PL
 \chapter{Solwery SAT}
 
-\section{Opis działania}
+\section{Problem spełnialności}
+Problem spełnialności (ang. \textit{Boolean satisfiability problem}, w~skrócie SAT) polega na sprawdzeniu, czy dana formuła logiczna
+posiada odpowiednie przypisanie zmiennych przy których cała formuła będzie prawdą.
+
+Wyrażenia wykorzystywane w~problemie SAT składają się z: 
+\begin{itemize}
+    \item zmiennych - $x_1, x_2 \dots x_n$, mogących przybrać wartość prawdziwą ($true$, $T$, $\top$, $1$) 
+    lub fałszywą ($false$,~$F$,~$\bot$,~$0$)
+    \item operatora koniunkcji - $AND$, $\land$
+    \item operatora alternatywy - $OR$, $\lor$
+    \item operatora negacji - $NOT$, $\lnot$
+    \item nawiasów - $()$
+\end{itemize}
+
+Formuły SAT przedstawia się w~postaci CNF (koniunkcyjna postać normalna, ang. \textit{conjunctive normal form}) 
+której struktura jest następująca: formuła jest koniunkcją klauzul, a~klauzula jest alternatywą literałów (tj. zmiennych lub ich negacji).
+
+\[ (x_{11} \lor x_{12} \lor \dots \lor x_{1n} ) \land (x_{21} \lor x_{22} \lor \dots \lor x_{2n} ) \land  \dots \land (x_{m1} \lor x_{m2} \lor \dots \lor x_{mn} ) \]
+
+
+Naiwny algorytm SAT jest trywialny - wystarczy dla każdej możliwej kombinacji zmiennych $x_1 \dots x_2$
+sprawdzić czy formuła jest spełnialna. Sprawdzenie następuje w~czasie liniowym od wartości $n$, zatem cały algorytm
+ma złożoność obliczeniową $O(2^n)$ - niepraktyczną w praktycznie każdych zastosowaniach poza bardzo małymi wartościami $n$.
+
+Problem SAT jest pierwszym problemem dla którego udowodniono że jest $NP$-zupełny (Twierdzenie Cooka-Levina \cite{cook-SAT, levin-SAT}).
+Oznacza to, że można w czasie wielomianowych sprowadzić każdy problem decyzyjny zawierający się w $NP$ do SAT.
+
+Problem należący do $NP$ charakteryzuje się tym, że zweryfikowanie pojedynczego rozwiązania jest możliwe w~czasie wielomianowym
+dla deterministycznej Maszyny Turinga, oraz że sprawdzenie wszystkich możliwości (a~więc rozstrzygnięcie problemu) jest możliwe
+również w~czasie wielomianowym, ale dla niedeterministycznej Maszyny Turinga - przez jednoczesne sprawdzenie każdej kombinacji. 
+Wynika z~tego również, że $P \subseteq NP$.
+
+Nie każda możliwa formuła CNF stanowi problem $NP$-zupełny. Twierdzenie o dychotomii Schaefera określa 
+szczególne instancje problemu należące do $P$ (przy założeniu, że $P \neq NP$) \cite{schaefer-dichotomy}:
+
+\begin{enumerate}
+    \item Formuła jest spełnialna jeśli wszystkie zmienne przyjmują wartość 0
+    \item Formuła jest spełnialna jeśli wszystkie zmienne przyjmują wartość 1
+    \item Każda klauzula ma co najwyżej jeden literał pozytywny (każda klauzula jest klauzulą Horna)
+    \item Każda klauzula ma co najwyżej jeden literał negatywny (każda klauzula jest dualną klauzulą Horna)
+    \item Każda klauzula ma co najwyżej dwa literały (2-CNF)
+    \item Formuła jest równoznaczna systemowi równań linowych $x_1 \oplus x_2 \oplus \dots \oplus x_n = c$, gdzie
+    $x_i,~c~\in~\{0, 1\}$ a~$\oplus \equiv$ dodawanie $mod_2$
+    
+\end{enumerate}
+
+\section{Opis działania solwerów SAT}
+Solwery SAT można podzielić na dwie kategorie -- kompletne i niekompletne.
+Algorytmy kompletne gwarantują, że jeśli istnieje spełniające przypisanie dla analizowanej formuły to zostanie zwrócony wynik pozytywny.
+Natomiast wynikiem działania solwera niekompletnego jest albo pozytywny -- istnieje odpowiednie przypisanie lub niezdefiniowany -- algorytm nie
+znalazł rozwiązania w określonej liczbie prób.
+
+\subsection{Solwery kompletne}
+Algorytmy kompletne do rozstrzygania problemów SAT korzystają z szeregu metod do których należą: 
+kwantyfikacja egzystencjalna, wnioskowanie, przeszukiwanie, wnioskowanie i przeszukiwanie \cite{handbook-satifiability-complete}.
+\subsubsection{Kwantyfikacja egzystencjalna}
+\subsubsection{Wnioskowanie}
+\subsubsection{Przeszukiwanie}
+\subsubsection{Wnioskowanie i przeszukiwanie}
+\subsection{Solwery niekompletne}
+Do metod niekompletnego rozstrzygania spełnialności należą:  \cite{handbook-satifiability-incomplete}. 
 
 \section{Wykorzystywanie solwerów SAT w celu uzyskania przeciwobrazu Negatywnej Bazy Danych}
 
+Problem znalezienia ukrytego ciągu w Negatywnej Bazie Danych jest równoważny SAT i zapis napisów nad alfabetem 
+$\{0, 1, *\}$ można sprowadzić do CNF w czasie liniowym.
+ Dla przykładu, poniższy zbiór rekordów można zinterpretować jako 
+ \enquote{Znajdź takie przypisanie wartościami \{0, 1\}, żeby dla każdego rekordu nie pokrywało się na co najmniej jednej pozycji}.
+ 
+\begin{table}[h]
+
+    \centering
+    \label{Tbl:NDB-sat-example}
+    \begin{tabular}{|l|}
+    	\hline
+    	11*0 \\ \hline
+    	001* \\ \hline
+    	*111 \\ \hline
+    	*101 \\ \hline
+    \end{tabular}
+    \caption{Przykładowy zbiór rekordów $NDB$}
+\end{table}
+
+Zatem pomijając symbole $*$, zamieniając wartości $\{0,1\}$ na odpowiadające literały, negując je i łącząc operatorem alternatywy
+oraz wstawiając operatory koniunkcji pomiędzy powstałe klauzule otrzymujemy postać CNF:
+
+\[ (\neg x_1 \lor \neg x_2 \lor x_4)~\land \]\[  (x_1 \lor x_2 \lor \neg x_3)~\land \]\[ (\neg x_2 \lor \neg x_3 \lor \neg x_4)~\land \]\[(\neg x_2 \lor x_3 \lor \neg x_4) \]
+
+
+Metoda działania solwerów SAT nie polega znalezieniu wszystkich rozwiązań tylko na sprawdzeniu czy dana formuła jest spełnialna, 
+dlatego w sytuacji próby odwrócenia baz wielorekordowych lub wygenerowanych z użyciem algorytmów niekompletnych atakujący potrzebuje dla każdego pojedynczego rozwiązania dodać dodatkową formułę przeczącą znalezionemu rekordowi i ponownie uruchomić solwer.   
+
+W związku z faktem, że uzyskanie dostępu do nawet pojedynczego rekordu w systemach uwierzytelniania jest niedopuszczalne, testy są przeprowadzone pod kątem znalezienia pierwszego rozwiązania. 
