@@ -18,15 +18,19 @@ Należy jednak pamiętać, że zwiększenie długości rekordu znacznie wydłuż
 
 \begin{table}[h]
     \centering
-    \label{Tbl:NDB-logform}
+
     \begin{tabular}{|l|l|}
-        \hline
-        rekord NDB & formuła logiczna                       \\ \hline
-        011*       & $\neg{x_1} \land x_2 \land x_3$        \\ \hline
-        0*01       & $\neg{x_1} \land \neg{x_3} \land x_4 $ \\ \hline
-        111*       & $x_1 \land x_2 \land x3$               \\ \hline
+    	\hline
+    	rekord NDB & formuła logiczna                      \\ \hline
+    	011*       & $ \neg x_1 \land x_2 \land x_3$       \\ \hline
+    	001*       & $ \neg x_1 \land \neg x_2 \land x_3 $ \\ \hline
+    	1*1*       & $x_1 \land x_3 $                      \\ \hline
+    	0*0*       & $\neg x_1 \land \neg x_3 $            \\ \hline
+    	1*00       & $x_1 \land \neg x_3 \land  \neg x_4$  \\ \hline
     \end{tabular}
-    \caption{Reprezentacja formuł logicznych za pomocą NDB}
+    
+    \caption{Reprezentacja formuł logicznych za pomocą NDB kodującej zbiór $DB~=~\{1001,~1101,~1110\}$}
+    \label{Tbl:NDB-logform}
 \end{table}
 
 \section{Zastosowanie w~systemach uwierzytelniania}
@@ -49,7 +53,7 @@ algorytm prefiksowy \cite{NRI-Esponda, Esponda2004EnhancingPT}. Został on oprac
 \begin{algorithm}[H]
     \SetAlgoLined
     \SetAlgorithmName{Algorytm}{}{}
-    \KwData{$DB$ - zbiór rekordów do zareprezentowania w~NDB, $l$ - liczba rekordów w~$DB$}
+    \KwData{$DB$ - zbiór rekordów do zareprezentowania w~NDB, $l$ - długość rekordu $DB$}
     \KwResult{Zbiór rekordów NDB}
     $Prefix_n(V)$ - Prefiks n-znakowy rekordu $V$\\
     $len(V)$ - Długość rekordu $V$\\
@@ -100,11 +104,51 @@ Przykładowy wynik działania znajduje się w~tabeli \ref{tbl:prefix_results}.
 
 
 Algorytm prefiksowy jest deterministyczny i~każdy powstały rekord reprezentuje unikalną, nie pokrywającą się część $U~-~DB$ \cite{NRI-Esponda}.
-Powoduje to, że algorytm uzyskiwania zbioru $DB$ z~otrzymanej $NDB$ nie wymaga sprowadzenia do problemu SAT. Wystarczy jedynie odpowiednio posortować rekordy i~wyznaczyć przedziały pomiędzy nimi.
+Powoduje to, że algorytm uzyskiwania zbioru $DB$ z~otrzymanej $NDB$ nie wymaga sprowadzenia do problemu SAT. Wystarczy jedynie odpowiednio posortować rekordy i~wyznaczyć przedziały pomiędzy nimi, co pokazuję w algorytmie \ref{alg:prefix-reverse}.
+
+\begin{algorithm}[H]
+    \SetAlgoLined
+    \SetAlgorithmName{Algorytm}{}{}
+    \KwData{$NDB$ - zbiór rekordów do odwrócenia, $l$ - długość rekordu $NDB$}
+    \KwResult{Zbiór rekordów DB}
+    Posortuj zbiór $NDB$\\
+    $V_l$ = rekord $DB$ wypełniony symbolami '$0$' o długości $l$\\
+    \ForEach{$V$ \textbf{in} $NDB$}
+    {
+        $V_h$ = $V$ z zamienionymi symbolami '$*$' na '$0$'\\
+        $R$ = $Rekordy\_DB\_W\_Przedziale(V_l, V_h)$\\
+        Dodaj $R$ do zbioru wynikowego \\
+        $V_l = V$ z zamienionymi symbolami '$*$' na '$1$'\\
+    }
+    $V_h$ = rekord $DB$ wypełniony symbolami '$1$' o długości $l$\\
+    $R$ = $Rekordy\_DB\_W\_Przedziale(V_l, V_h)$\\
+    Dodaj $R$ do zbioru wynikowego \\
+    \caption{Algorytm odwracający $NDB$ wygenerowaną za pomocą algorytmu prefiksowego}
+    \label{alg:prefix-reverse}
+\end{algorithm}
+
+\begin{algorithm}[H]
+    \SetAlgoLined
+    \SetAlgorithmName{Algorytm}{}{}
+    \KwData{$V_1, V_2$ - rekordy $DB$}
+    \KwResult{Zbiór rekordów DB w przedziale $(V_1, V_2)$}
+    Dodaj binarnie $1$ do $V_1$\\
+    \While{$V_1 \neq V_2$}
+    {
+       Dodaj $V_1$ do zbioru wynikowego. \\
+       Dodaj binarnie $1$ do $V_1$\\
+    }
+    \caption{Rekordy\_DB\_W\_Przedziale}
+    \label{alg:prefix-reverse-print}
+\end{algorithm}
+
 
 Czas wykonywania procedury wynosi $O(l|DB|)$, jednak w~przypadku zapisywania wyniku do bazy wzrasta do $O(l^2|DB|)$ gdyż konieczna jest serializacja każdego rekordu.
 Złożoność pamięciowa dla optymalnej implementacji wynosi $O(l|DB|)$ w~przypadku gdy poprzednio generowane rekordy $NDB$ nie są przetrzymywane w~pamięci. 
 Dla danego zbioru $DB$ generowane jest $O(l|DB|)$ rekordów co sprowadza się do wielkości powstałej bazy danych wynoszącej $O(l^2|DB|)$.
+
+Przestawiony powyżej algorytm odwracający (\ref{alg:prefix-reverse}) wykonuje się w~czasie $O(|NDB|)=~O(l|DB|)$ co jest wynikiem lepszym od procedury generacyjnej z zapisem do bazy.
+
 \subsection{Algorytm \textit{Randomize\_NDB}}
 Algorytm prefiksowy generuje poprawne rekordy $NDB$, jednak nie jest praktyczny w~żadnych zastosowaniach związanych
 z~bezpieczeństwem, ponieważ wynik jego działania jest stosunkowo prosto sprowadzić do postaci pozytywnej. 
@@ -115,7 +159,7 @@ z $U - DB$ i~są trudniejsze do odwrócenia.
 \begin{algorithm}[H]
     \SetAlgoLined
     \SetAlgorithmName{Algorytm}{}{}
-    \KwData{$DB$ - zbiór rekordów do zareprezentowania w~NDB, $l$ - liczba rekordów w~$DB$}
+    \KwData{$DB$ - zbiór rekordów do zareprezentowania w~NDB, $l$ - długość rekordu $DB$}
     \KwResult{Zbiór rekordów NDB}
     $Prefix_n(V)$ - Prefiks n-znakowy rekordu $V$\\
     $len(V)$ - Długość rekordu $V$\\
@@ -151,7 +195,7 @@ z $U - DB$ i~są trudniejsze do odwrócenia.
 ~\\\\
 Algorytm ten działa na podobnej zasadzie co algorytm prefiksowy (rozdział \ref{sec:prefix-alg}) z~pewnymi modyfikacjami.
 Na początku kolejność bitów w~$DB$ jest mieszana za pomocą losowej permutacji aby pozycje zdefiniowane w~generowanej prefiksowej $NDB$ nie były skumulowane na początku wyrazów. Następnie dla każdego powstałego negatywnego rekordu losuje się $n$ pozycji nieustalonych i~zastępuje się go równoznacznym zbiorem rekordów które mają te pozycje ustalone. 
-Powstałe ciągi są dodatkowo obfuskowane przez wstawienie na losowych pozycjach zamiast bitu zdefiniowanego znak $*$ zgodnie z~algorytmem \textit{Pattern\_Generate}.
+Powstałe ciągi są dodatkowo zaciemniane przez wstawienie na losowych pozycjach zamiast bitu zdefiniowanego znak $*$ zgodnie z~algorytmem \textit{Pattern\_Generate}.
 
 Wynik algorytmu jest niedeterministyczny co powoduje że dla takich samych zbiorów $DB$ rezultat może się różnić. Generacja wielu redundantnych rekordów zwiększa odporność otrzymanej bazy na próby przywrócenia do postaci pozytywnej, jednak wiąże się to z~ze zwiększeniem objętości NDB średnio $\frac{l^2}{2}$ razy w~stosunku do algorytmu prefiksowego.
 
@@ -159,8 +203,8 @@ Wynik algorytmu jest niedeterministyczny co powoduje że dla takich samych zbior
 \begin{algorithm}[!htb]
     \SetAlgoLined
     \SetAlgorithmName{Algorytm}{}{}
-    \KwData{$DB$ - zbiór rekordów do zareprezentowania w~NDB, $V_{q}$ - rekord NDB do zobfuskowania}
-    \KwResult{Zobfuskowany rekord NDB}
+    \KwData{$DB$ - zbiór rekordów do zareprezentowania w~NDB, $V_{q}$ - rekord NDB do zaciemnienia}
+    \KwResult{Zaciemniony rekord NDB}
     $\pi$ = losowa permutacja o~długości $|V_{pe}|$\\
     $SIV$ = \{\} // wektor zmienionych bitów\\
     \For{$i = 1$ to $|V_{q}|$}
@@ -198,8 +242,8 @@ Zmiany względem algorytmu prefiksowego oraz procedura \textit{Pattern\_Generate
 ponieważ każda modyfikacja rekordu rozszerza zakres pokrywanych ciągów wprowadzając redundantne informacje.
 W \cite{NRI-Esponda} przedstawiony jest dowód że problem rekonstrukcji $DB$ z~$NDB$ jest NP-trudny (każdą instancję 3-SAT można sprowadzić do $NDB$).
 
-Powyższy algorytm w~teorii jest zdolny do tworzenia trudnych instancji, ale nie posiada żadnych mechanizmów umożliwiających ingerencję w~jego działanie - wynik jest zawsze losowy.
-W praktyce powoduje to, że można oczekiwać, że wynikowa $NDB$ może być odwrócona niemal natychmiast przez współczesne solwery SAT, co pokazuję w~dalszych rozdziałach.       
+Powyższy algorytm w~teorii jest zdolny do tworzenia trudnych instancji, ale nie posiada żadnych mechanizmów umożliwiających ingerencję w~jego działanie -- wynik jest zawsze losowy.
+Prawdopodobieństwo uzyskania trudnej do złamania kombinacji rekordów jest bardzo małe, co powoduje że w znacznej większości przypadków wynikowa $NDB$ może być odwrócona niemal natychmiast przez współczesne solwery SAT, co pokazuję w~dalszych rozdziałach.       
 
 
 \begin{table}[!htb]
@@ -243,7 +287,7 @@ pod względem wykrywania braku spełnialności \cite{GeneratingHardFormulasByHid
      \While{$|W| \neq n$}
      {
          Wybierz 3 losowe zmienne\\
-         Stwórz klauzulę 3CNF używając wylosowane zmienne, z~losowymi znakami\\
+         Stwórz klauzulę 3CNF używając wylosowanych zmiennych, z~losowymi znakami\\
          Dodaj klauzulę do zbioru wynikowego $W$
      } 
      
@@ -319,7 +363,7 @@ parametrów $q$, $r$ i~$k$ jest możliwe praktycznie stworzenie instancji $NDB$ 
 w~czasie potęgowym tj. przez całkowite przeszukanie, co powoduje że dla odpowiednio dużych $l$ odzyskanie 
 zabezpieczonego ciągu jest niepraktyczne.
 
-Takie podejście do problemu powoduje szereg konsekwencji. Pierwszą z~nich jest to że wielkość otrzymanej bazy
+Takie podejście do problemu ma szereg konsekwencji. Pierwszą z~nich jest to że wielkość otrzymanej bazy
 nie zależy od przechowywanego rekordu i~można ją kontrolować za pomocą parametru $r$ 
 - generowane jest dokładnie $l * r$ rekordów. Nie ma jednak możliwości zawarcia w~jednej instancji $NDB$ 
 więcej niż jednego ciągu bitowego - można zakodować jedynie zero lub jeden rekord.
@@ -389,7 +433,6 @@ różnych typów klauzul -~w~zależności od liczby pokrywających się bitów z
         $V$ = rekord z $k$ ustalonymi bitami, pokrywający się z $s$ na $k-i$ losowych pozycjach\\
         Dodaj rekord $V$ do $NDB$
     } 
-    
     \caption{Algorytm \textit{K-Hidden}}
     \label{alg:khidden}
 \end{algorithm}
