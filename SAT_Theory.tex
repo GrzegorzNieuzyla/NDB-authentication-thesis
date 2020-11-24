@@ -50,18 +50,84 @@ szczególne instancje problemu należące do $P$ (przy założeniu, że $P \neq 
 \section{Opis działania solwerów SAT}
 Solwery SAT można podzielić na dwie kategorie -- kompletne i niekompletne.
 Algorytmy kompletne gwarantują, że jeśli istnieje spełniające przypisanie dla analizowanej formuły to zostanie zwrócony wynik pozytywny.
-Natomiast wynikiem działania solwera niekompletnego jest albo pozytywny -- istnieje odpowiednie przypisanie lub niezdefiniowany -- algorytm nie
+Natomiast wyniki działania solwera niekompletnego jest albo pozytywny -- istnieje odpowiednie przypisanie lub niezdefiniowany -- algorytm nie
 znalazł rozwiązania w określonej liczbie prób.
 
 \subsection{Solwery kompletne}
 Algorytmy kompletne do rozstrzygania problemów SAT korzystają z szeregu metod do których należą: 
 kwantyfikacja egzystencjalna, wnioskowanie, przeszukiwanie, wnioskowanie i przeszukiwanie \cite{handbook-satifiability-complete}.
+
 \subsubsection{Kwantyfikacja egzystencjalna}
+Kwantyfikacja egzystencjalna jest klasą algorytmów upraszczających zadaną formułę CNF do postaci spełnialnej $\{\}$ lub niespełnialnej $\{\emptyset\}$.
+W tym celu definiuje się operator $\exists$ zmiennej $P$ w formule $\Delta$.
+\[ \exists P \Delta \stackrel{\text{def}}{=} (\Delta | P) \lor (\Delta | \neg P) \]
+gdzie operator '$|$' jest \textit{warunkowaniem} i~definiuje się je następująco:
+\[ \Delta | P \stackrel{\text{def}}{=} \{\alpha - \{\neg P\}~|~\alpha \in \Delta, P \notin \alpha\} \]
+
+Proces wnioskowania można intuicyjnie przedstawić jako ustawienie zmiennej P na wartość prawdziwą (lub fałszywą w przypadku $\neg P$)
+i~zredukowanie zbioru klauzul usuwając te, które są spełnione oraz usuwając z~pozostałych literały mające wartość fałszywą.
+Kwantyfikator $\exists P \Delta $ określa formułę po wyeliminowaniu zmiennej $P$ przez rozpatrzenie obu możliwych wartości.
+
+Z~punktu widzenia problemu spełnialności najważniejszą właściwością jest to, że formuła $\Delta$ jest spełnialna wtedy i~tylko wtedy, gdy 
+$\exists P \Delta$ jest spełnialna. Pozwala to na stopniowe eliminowanie zmiennych aż do osiągnięcia pustej klauzuli lub pustej formuły. 
+Kwantyfikacja egzystencjalna jest wykorzystywana m.in w algorytmie DP oraz w~symbolicznym rozwiązywaniu SAT.
+
 \subsubsection{Wnioskowanie}
+Uproszczanie formuł przez wnioskowanie opiera się na usuwaniu redundantnych literałów tj. wykluczających się nawzajem.
+Przykładowo w~formule:
+\[ \{\{x_1, x_2, \neg x_3 \},  \{ \neg x_2, x_4, x_5 \}\} \]
+zmienna $x_2$ występuje w postaci zanegowanej i~niezanegowanej w~różnych klauzulach. Oznacza to, żeby cała formuła była spełniona,
+co najmniej jeden pozostały literał musi się ewaluować do prawdy. Można zatem zastosować następujące przekształcenie:
+  \[ \{\{x_1, \neg x_3, x_4, x_5 \}\} \]
+  
+Dana formuła jest niespełnialna wtedy i tylko wtedy, gdy istnieje wnioskowanie prowadzące do pustej klauzuli, zatem po wyczerpaniu
+wszystkich możliwości wnioskowania możemy ustalić, że problem jest spełnialny. 
+
+Do algorytmów wykorzystujących tą metodę należą algorytm St{\aa}lmarcka i HeerHugo.
+
 \subsubsection{Przeszukiwanie}
+Problem SAT można przedstawić jako drzewo decyzyjne przypisania zmiennych, gdzie liście są wszystkimi możliwymi kombinacjami literałów.
+Metoda przeszukiwania polega na znalezieniu liścia spełniającego formułę. Używa się do tego algorytmu przeszukiwania wszerz oraz warunkowania
+w~celu ograniczenia drzewa. 
+
+Dodatkowo używa się także \textit{propagacji jednostkowej} (ang. \textit{unit propagation}) za której pomocą 
+można odrzucić lub potwierdzić poprawność danego poddrzewa we wczesnej fazie analizy przez spełnienie klauzul jednostkowych (posiadających tylko jeden literał).
+
+Wzorcowym zastosowaniem tej metody jest algorytm \textit{DPLL}.
+
 \subsubsection{Wnioskowanie i przeszukiwanie}
+Wadą podejścia zastosowanego w \textit{DPLL} jest fakt, że podczas cofania się po drzewie w kierunku korzenia nie bierze się pod uwagę
+zbioru zmiennych, które spowodowały odrzucenie danego poddrzewa.
+Dlatego w tej metodzie stosuje się tzw. niechronologiczne cofanie -- podczas konfliktu literałów wyznacza się zbiór powodujących 
+go zmiennych i zmienia się ich wartości, pomijając te nie biorące udziału w konflikcie.
+
+Dodatkowo podczas działania algorytmu wprowadza się dodatkowe klauzule przedstawiające zależności, które pozwalają wykrywać nieścisłości 
+bliżej korzenia, jeszcze bardziej skracając czas działania.
+
+Do tej klasy należy większość współczesnych, najbardziej optymalnych algorytmów kompletnych rozstrzygania problemu SAT -- m.in 
+\textit{zChaff}, \textit{MiniSAT}, \textit{PicoSAT} i \textit{Siege}.
+
 \subsection{Solwery niekompletne}
-Do metod niekompletnego rozstrzygania spełnialności należą:  \cite{handbook-satifiability-incomplete}. 
+Solwery nie gwarantujące znalezienia rozwiązania opierają się na \textit{stochastycznym przeszukiwaniu lokalnym}.
+Takie rozwiązanie pozwala na znaczne mniejsze czasy wykonywania dla odpowiednich formuł niż algorytmy wykorzystujące DPLL, ale
+w~przypadku trudnych problemów zamiast zdegenerowania złożoności obliczeniowej do $O(2^n)$ zostanie zwrócony wynik nieokreślony.  
+
+Czołowymi solwerami z tej kategorii są \textit{GSAT} i \textit{WalkSAT} \cite{handbook-satifiability-incomplete}.
+
+
+\subsubsection{\textit{GSAT}}
+Schemat działania \textit{GSAT} polega na wygenerowaniu losowego przypisania i~zachłannym \textit{odwracaniu} (ang. \textit{flip})
+wartości zmiennych w celu zminimalizowania liczby niespełnionych klauzul. Ilość odwróceń oraz liczbę prób
+z~wygenerowaniem nowego ciągu początkowego można modyfikować za pomocą odpowiednich parametrów.
+
+\subsubsection{\textit{WalkSAT}}
+\textit{WalkSAT} rozszerza algorytm stopniowego odwracania zmiennych używany w \textit{GSAT}, redukując stopień zachłanności.
+Na początku każdej iteracji wybierana jest losowa klauzula i w niej szukana jest zmienna, której zanegowanie nie zmieni żadnej
+innej klauzuli na niespełnioną. Jeśli nie została znaleziona \textit{WalkSAT} wybiera z danej klauzuli losowa zmienną lub taką, której
+zmiana spowoduję spełnienie jak największej ilości pozostałych klauzul. Wprowadzony jest dodatkowo parametr szumu $p \in [0, 1]$ określający
+jak często wybierane jest podejście nie-zachłanne. Dla losowych formuł 3SAT optymalna wartość szumu wynosi $p = 0.57$ \cite{handbook-satifiability-incomplete}.
+
+
 
 \section{Wykorzystywanie solwerów SAT w celu uzyskania przeciwobrazu Negatywnej Bazy Danych}
 
