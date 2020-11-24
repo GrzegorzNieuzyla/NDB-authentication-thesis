@@ -3,7 +3,7 @@
 
 \section{Problem spełnialności}
 Problem spełnialności (ang. \textit{Boolean satisfiability problem}, w~skrócie SAT) polega na sprawdzeniu, czy dana formuła logiczna
-posiada odpowiednie przypisanie zmiennych przy których cała formuła będzie prawdą.
+posiada odpowiednie przypisanie zmiennych przy których całość wyrażenia będzie ewaluowana do prawdy.
 
 Wyrażenia wykorzystywane w~problemie SAT składają się z: 
 \begin{itemize}
@@ -16,24 +16,24 @@ Wyrażenia wykorzystywane w~problemie SAT składają się z:
 \end{itemize}
 
 Formuły SAT przedstawia się w~postaci CNF (koniunkcyjna postać normalna, ang. \textit{conjunctive normal form}) 
-której struktura jest następująca: formuła jest koniunkcją klauzul, a~klauzula jest alternatywą literałów (tj. zmiennych lub ich negacji).
+której struktura jest następująca: formuła jest koniunkcją klauzul, a~klauzula jest alternatywą literałów (tj. zmiennych lub ich negacji):
 
 \[ (x_{11} \lor x_{12} \lor \dots \lor x_{1n} ) \land (x_{21} \lor x_{22} \lor \dots \lor x_{2n} ) \land  \dots \land (x_{m1} \lor x_{m2} \lor \dots \lor x_{mn} ) \]
 
 
-Naiwny algorytm SAT jest trywialny - wystarczy dla każdej możliwej kombinacji zmiennych $x_1 \dots x_2$
+Naiwny algorytm SAT jest trywialny -~wystarczy dla każdej możliwej kombinacji zmiennych $x_1 \dots x_n$
 sprawdzić czy formuła jest spełnialna. Sprawdzenie następuje w~czasie liniowym od wartości $n$, zatem cały algorytm
-ma złożoność obliczeniową $O(2^n)$ - niepraktyczną w praktycznie każdych zastosowaniach poza bardzo małymi wartościami $n$.
+ma złożoność obliczeniową $O(2^n)$ -~nie do przyjęcia w~praktycznie żadnych zastosowaniach poza bardzo małymi wartościami $n$.
 
 Problem SAT jest pierwszym problemem dla którego udowodniono że jest $NP$-zupełny (Twierdzenie Cooka-Levina \cite{cook-SAT, levin-SAT}).
-Oznacza to, że można w czasie wielomianowych sprowadzić każdy problem decyzyjny zawierający się w $NP$ do SAT.
+Oznacza to, że można w~czasie wielomianowych sprowadzić każdy problem decyzyjny zawierający się w~$NP$ do SAT.
 
 Problem należący do $NP$ charakteryzuje się tym, że zweryfikowanie pojedynczego rozwiązania jest możliwe w~czasie wielomianowym
 dla deterministycznej Maszyny Turinga, oraz że sprawdzenie wszystkich możliwości (a~więc rozstrzygnięcie problemu) jest możliwe
-również w~czasie wielomianowym, ale dla niedeterministycznej Maszyny Turinga - przez jednoczesne sprawdzenie każdej kombinacji. 
+również w~czasie wielomianowym, ale dla niedeterministycznej Maszyny Turinga -~przez jednoczesne sprawdzenie każdej kombinacji. 
 Wynika z~tego również, że $P \subseteq NP$.
 
-Nie każda możliwa formuła CNF stanowi problem $NP$-zupełny. Twierdzenie o dychotomii Schaefera określa 
+Nie każda możliwa formuła CNF stanowi problem $NP$-zupełny. Twierdzenie o~dychotomii Schaefera określa 
 szczególne instancje problemu należące do $P$ (przy założeniu, że $P \neq NP$) \cite{schaefer-dichotomy}:
 
 \begin{enumerate}
@@ -48,91 +48,91 @@ szczególne instancje problemu należące do $P$ (przy założeniu, że $P \neq 
 \end{enumerate}
 
 \section{Opis działania solwerów SAT}
-Solwery SAT można podzielić na dwie kategorie -- kompletne i niekompletne.
+Solwery SAT można podzielić na dwie kategorie -- kompletne i~niekompletne.
 Algorytmy kompletne gwarantują, że jeśli istnieje spełniające przypisanie dla analizowanej formuły to zostanie zwrócony wynik pozytywny.
-Natomiast wyniki działania solwera niekompletnego jest albo pozytywny -- istnieje odpowiednie przypisanie lub niezdefiniowany -- algorytm nie
-znalazł rozwiązania w określonej liczbie prób.
+Natomiast wynik działania solwera niekompletnego może być albo pozytywny -- istnieje odpowiednie przypisanie, albo niezdefiniowany -- algorytm nie
+znalazł rozwiązania w~określonej liczbie prób.
 
 \subsection{Solwery kompletne}
-Algorytmy kompletne do rozstrzygania problemów SAT korzystają z szeregu metod do których należą: 
-kwantyfikacja egzystencjalna, wnioskowanie, przeszukiwanie, wnioskowanie i przeszukiwanie \cite{handbook-satifiability-complete}.
+Algorytmy kompletne do rozstrzygania problemów SAT korzystają z~szeregu metod do których należą: 
+kwantyfikacja egzystencjalna, wnioskowanie, przeszukiwanie oraz wnioskowanie i~przeszukiwanie \cite{handbook-satifiability-complete}.
 
 \subsubsection{Kwantyfikacja egzystencjalna}
 Kwantyfikacja egzystencjalna jest klasą algorytmów upraszczających zadaną formułę CNF do postaci spełnialnej $\{\}$ lub niespełnialnej $\{\emptyset\}$.
-W tym celu definiuje się operator $\exists$ zmiennej $P$ w formule $\Delta$.
+W tym celu definiuje się operator $\exists$ zmiennej $P$ w~formule $\Delta$:
 \[ \exists P \Delta \stackrel{\text{def}}{=} (\Delta | P) \lor (\Delta | \neg P) \]
 gdzie operator '$|$' jest \textit{warunkowaniem} i~definiuje się je następująco:
-\[ \Delta | P \stackrel{\text{def}}{=} \{\alpha - \{\neg P\}~|~\alpha \in \Delta, P \notin \alpha\} \]
+\[ \Delta | P \stackrel{\text{def}}{=} \{\alpha - \{\neg P\}~|~\alpha \in \Delta, P~\notin \alpha\} \]
 
-Proces wnioskowania można intuicyjnie przedstawić jako ustawienie zmiennej P na wartość prawdziwą (lub fałszywą w przypadku $\neg P$)
+Proces wnioskowania można intuicyjnie przedstawić jako ustawienie zmiennej P~na wartość prawdziwą (lub fałszywą w~przypadku $\neg P$)
 i~zredukowanie zbioru klauzul usuwając te, które są spełnione oraz usuwając z~pozostałych literały mające wartość fałszywą.
-Kwantyfikator $\exists P \Delta $ określa formułę po wyeliminowaniu zmiennej $P$ przez rozpatrzenie obu możliwych wartości.
+Kwantyfikator $\exists P~\Delta $ określa formułę po wyeliminowaniu zmiennej $P$ przez rozpatrzenie obu możliwych wartości.
 
 Z~punktu widzenia problemu spełnialności najważniejszą właściwością jest to, że formuła $\Delta$ jest spełnialna wtedy i~tylko wtedy, gdy 
-$\exists P \Delta$ jest spełnialna. Pozwala to na stopniowe eliminowanie zmiennych aż do osiągnięcia pustej klauzuli lub pustej formuły. 
-Kwantyfikacja egzystencjalna jest wykorzystywana m.in w algorytmie DP oraz w~symbolicznym rozwiązywaniu SAT.
+$\exists P~\Delta$ jest spełnialna. Pozwala to na stopniowe eliminowanie zmiennych aż do osiągnięcia pustej klauzuli lub pustej formuły. 
+Kwantyfikacja egzystencjalna jest wykorzystywana m.in w~algorytmie DP oraz w~symbolicznym rozwiązywaniu SAT.
 
 \subsubsection{Wnioskowanie}
-Uproszczanie formuł przez wnioskowanie opiera się na usuwaniu redundantnych literałów tj. wykluczających się nawzajem.
+Upraszczanie formuł przez wnioskowanie opiera się na usuwaniu redundantnych literałów tj. wykluczających się nawzajem.
 Przykładowo w~formule:
 \[ \{\{x_1, x_2, \neg x_3 \},  \{ \neg x_2, x_4, x_5 \}\} \]
-zmienna $x_2$ występuje w postaci zanegowanej i~niezanegowanej w~różnych klauzulach. Oznacza to, żeby cała formuła była spełniona,
+zmienna $x_2$ występuje w~postaci zanegowanej i~niezanegowanej w~różnych klauzulach. Oznacza to, żeby cała formuła była spełniona,
 co najmniej jeden pozostały literał musi się ewaluować do prawdy. Można zatem zastosować następujące przekształcenie:
   \[ \{\{x_1, \neg x_3, x_4, x_5 \}\} \]
   
-Dana formuła jest niespełnialna wtedy i tylko wtedy, gdy istnieje wnioskowanie prowadzące do pustej klauzuli, zatem po wyczerpaniu
+Dana formuła jest niespełnialna wtedy i~tylko wtedy, gdy istnieje wnioskowanie prowadzące do pustej klauzuli, zatem po wyczerpaniu
 wszystkich możliwości wnioskowania możemy ustalić, że problem jest spełnialny. 
 
-Do algorytmów wykorzystujących tą metodę należą algorytm St{\aa}lmarcka i HeerHugo.
+Do algorytmów wykorzystujących tą metodę należą algorytm St{\aa}lmarcka i~HeerHugo.
 
 \subsubsection{Przeszukiwanie}
 Problem SAT można przedstawić jako drzewo decyzyjne przypisania zmiennych, gdzie liście są wszystkimi możliwymi kombinacjami literałów.
 Metoda przeszukiwania polega na znalezieniu liścia spełniającego formułę. Używa się do tego algorytmu przeszukiwania wszerz oraz warunkowania
 w~celu ograniczenia drzewa. 
 
-Dodatkowo używa się także \textit{propagacji jednostkowej} (ang. \textit{unit propagation}) za której pomocą 
+Dodatkowo używa się także \textit{propagacji jednostkowej} (ang. \textit{unit propagation}) za pomocą której
 można odrzucić lub potwierdzić poprawność danego poddrzewa we wczesnej fazie analizy przez spełnienie klauzul jednostkowych (posiadających tylko jeden literał).
 
 Wzorcowym zastosowaniem tej metody jest algorytm \textit{DPLL}.
 
 \subsubsection{Wnioskowanie i przeszukiwanie}
-Wadą podejścia zastosowanego w \textit{DPLL} jest fakt, że podczas cofania się po drzewie w kierunku korzenia nie bierze się pod uwagę
+Wadą podejścia zastosowanego w~\textit{DPLL} jest fakt, że podczas cofania się po drzewie w~kierunku korzenia nie bierze się pod uwagę
 zbioru zmiennych, które spowodowały odrzucenie danego poddrzewa.
-Dlatego w tej metodzie stosuje się tzw. niechronologiczne cofanie -- podczas konfliktu literałów wyznacza się zbiór powodujących 
-go zmiennych i zmienia się ich wartości, pomijając te nie biorące udziału w konflikcie.
+Dlatego w~tej metodzie stosuje się tzw. niechronologiczne cofanie -- podczas konfliktu literałów wyznacza się zbiór powodujących 
+go zmiennych i~zmienia się ich wartości, pomijając te nie biorące udziału w~konflikcie.
 
 Dodatkowo podczas działania algorytmu wprowadza się dodatkowe klauzule przedstawiające zależności, które pozwalają wykrywać nieścisłości 
 bliżej korzenia, jeszcze bardziej skracając czas działania.
 
 Do tej klasy należy większość współczesnych, najbardziej optymalnych algorytmów kompletnych rozstrzygania problemu SAT -- m.in 
-\textit{zChaff}, \textit{MiniSAT}, \textit{PicoSAT} i \textit{Siege}.
+\textit{zChaff}, \textit{MiniSAT}, \textit{PicoSAT} i~\textit{Siege}.
 
 \subsection{Solwery niekompletne}
 Solwery nie gwarantujące znalezienia rozwiązania opierają się na \textit{stochastycznym przeszukiwaniu lokalnym}.
 Takie rozwiązanie pozwala na znaczne mniejsze czasy wykonywania dla odpowiednich formuł niż algorytmy wykorzystujące DPLL, ale
-w~przypadku trudnych problemów zamiast zdegenerowania złożoności obliczeniowej do $O(2^n)$ zostanie zwrócony wynik nieokreślony.  
+w~przypadku trudnych problemów zamiast zdegenerowania złożoności obliczeniowej do $O(2^n)$ zostaje zwrócony wynik nieokreślony.  
 
-Czołowymi solwerami z tej kategorii są \textit{GSAT} i \textit{WalkSAT} \cite{handbook-satifiability-incomplete}.
+Czołowymi solwerami z~tej kategorii są \textit{GSAT} i~\textit{WalkSAT} \cite{handbook-satifiability-incomplete}.
 
 
 \subsubsection{\textit{GSAT}}
-Schemat działania \textit{GSAT} polega na wygenerowaniu losowego przypisania i~zachłannym \textit{odwracaniu} (ang. \textit{flip})
-wartości zmiennych w celu zminimalizowania liczby niespełnionych klauzul. Ilość odwróceń oraz liczbę prób
+Schemat działania \textit{GSAT} polega na wygenerowaniu losowego przypisania i~zachłannym \textit{odwracaniu} (ang. \textit{flipping})
+wartości zmiennych w~celu zminimalizowania liczby niespełnionych klauzul. Ilość odwróceń oraz liczbę prób
 z~wygenerowaniem nowego ciągu początkowego można modyfikować za pomocą odpowiednich parametrów.
 
 \subsubsection{\textit{WalkSAT}}
-\textit{WalkSAT} rozszerza algorytm stopniowego odwracania zmiennych używany w \textit{GSAT}, redukując stopień zachłanności.
-Na początku każdej iteracji wybierana jest losowa klauzula i w niej szukana jest zmienna, której zanegowanie nie zmieni żadnej
-innej klauzuli na niespełnioną. Jeśli nie została znaleziona \textit{WalkSAT} wybiera z danej klauzuli losowa zmienną lub taką, której
+\textit{WalkSAT} rozszerza algorytm stopniowego odwracania zmiennych używany w~\textit{GSAT}, redukując stopień zachłanności.
+Na początku każdej iteracji wybierana jest losowa klauzula, i~w~niej szukana jest zmienna, której zanegowanie nie zmieni żadnej
+innej klauzuli na niespełnioną. Jeśli nie została znaleziona, \textit{WalkSAT} wybiera z~danej klauzuli losową zmienną lub taką, której
 zmiana spowoduję spełnienie jak największej ilości pozostałych klauzul. Wprowadzony jest dodatkowo parametr szumu $p \in [0, 1]$ określający
-jak często wybierane jest podejście nie-zachłanne. Dla losowych formuł 3SAT optymalna wartość szumu wynosi $p = 0.57$ \cite{handbook-satifiability-incomplete}.
+jak często wybierane jest podejście nie-zachłanne. Dla losowych formuł 3SAT optymalna wartość szumu wynosi $p~=~0.57$ \cite{handbook-satifiability-incomplete}.
 
 
 
-\section{Wykorzystywanie solwerów SAT w celu uzyskania przeciwobrazu Negatywnej Bazy Danych}
+\section{Wykorzystywanie solwerów SAT w~celu uzyskania przeciwobrazu Negatywnej Bazy Danych}
 
-Problem znalezienia ukrytego ciągu w Negatywnej Bazie Danych jest równoważny SAT i zapis napisów nad alfabetem 
-$\{0, 1, *\}$ można sprowadzić do CNF w czasie liniowym.
+Problem znalezienia ukrytego ciągu w~Negatywnej Bazie Danych jest równoważny SAT i~zapis napisów nad alfabetem 
+$\{0, 1, *\}$ można sprowadzić do CNF w~czasie liniowym.
  Dla przykładu, poniższy zbiór rekordów można zinterpretować jako 
  \enquote{Znajdź takie przypisanie wartościami \{0, 1\}, żeby dla każdego rekordu nie pokrywało się na co najmniej jednej pozycji}.
  
@@ -150,13 +150,13 @@ $\{0, 1, *\}$ można sprowadzić do CNF w czasie liniowym.
     \caption{Przykładowy zbiór rekordów $NDB$}
 \end{table}
 
-Zatem pomijając symbole $*$, zamieniając wartości $\{0,1\}$ na odpowiadające literały, negując je i łącząc operatorem alternatywy
+Zatem pomijając symbole $*$, zamieniając wartości $\{0,1\}$ na odpowiadające literały, negując je i~łącząc operatorem alternatywy
 oraz wstawiając operatory koniunkcji pomiędzy powstałe klauzule otrzymujemy postać CNF:
 
 \[ (\neg x_1 \lor \neg x_2 \lor x_4)~\land \]\[  (x_1 \lor x_2 \lor \neg x_3)~\land \]\[ (\neg x_2 \lor \neg x_3 \lor \neg x_4)~\land \]\[(\neg x_2 \lor x_3 \lor \neg x_4) \]
 
 
-Metoda działania solwerów SAT nie polega znalezieniu wszystkich rozwiązań tylko na sprawdzeniu czy dana formuła jest spełnialna, 
-dlatego w sytuacji próby odwrócenia baz wielorekordowych lub wygenerowanych z użyciem algorytmów niekompletnych atakujący potrzebuje dla każdego pojedynczego rozwiązania dodać dodatkową formułę przeczącą znalezionemu rekordowi i ponownie uruchomić solwer.   
+Metoda działania solwerów SAT nie polega na znalezieniu wszystkich rozwiązań, tylko na sprawdzeniu czy dana formuła jest spełnialna, 
+dlatego w~sytuacji próby odwrócenia baz wielorekordowych lub wygenerowanych z~użyciem algorytmów niekompletnych atakujący potrzebuje dla każdego pojedynczego rozwiązania dodać dodatkową formułę przeczącą znalezionemu rekordowi i ponownie uruchomić solwer.   
 
-W związku z faktem, że uzyskanie dostępu do nawet pojedynczego rekordu w systemach uwierzytelniania jest niedopuszczalne, testy są przeprowadzone pod kątem znalezienia pierwszego rozwiązania. 
+W związku z~faktem, że uzyskanie dostępu do nawet pojedynczego rekordu w~systemach uwierzytelniania jest niedopuszczalne, testy są przeprowadzone pod kątem znalezienia pierwszego rozwiązania. 

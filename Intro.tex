@@ -5,16 +5,16 @@ Celem niniejszej pracy jest implementacja i~przetestowanie systemu uwierzytelnia
 niż standardowy schemat generowania skrótu hasła za pomocą funkcji generacji klucza (np. \textit{PBKDF2}, \textit{bcrypt})
 i~przechowywaniu w~standardowej (pozytywnej) bazie danych.
     
-Jak wynika z~raportu Google\cite{google-poll} większość internautów ma problem z~zachowaniem zasad bezpieczeństwa dotyczącego 
+Jak wynika z~raportu Google\cite{google-poll}, większość internautów ma problem z~zachowaniem zasad bezpieczeństwa dotyczącego 
 używania mediów społecznościowych i~portali internetowych. $66\%$ procent badanych przyznało się do używania jednego hasła do różnych kont. 
 W~przypadku wykradzenia bazy danych pojedynczego portalu i~uzyskaniu postaci jawnych haseł istnieje ryzyko uzyskania dostępu również do innych aplikacji
-przez atakującego.
+przez atakującego. W~takiej sytuacji wyciek danych z~amatorskiego forum tematycznego może zagrozić naszemu kontu bankowemu lub poczcie elektronicznej.
 
 Główną przyczyną nadużywania jednego hasła jest konieczność zapamiętania danych logowaniu do wielu stron internetowych -- $75\%$ internautów ma problem z~ich zarządzeniem.
   
 Istnieje szereg metod, które indywidualny użytkownik może zastosować w~celu polepszenia swojego bezpieczeństwa w~Internecie, ale nie cieszą
 się one dużą popularnością. Według raportu tylko $37\%$ internautów używa uwierzytelnienia wielopoziomowego, a~menadżerów haseł
-umożliwiających stosowanie różnych i~silnych danych logowania -- tylko $15\%$.
+umożliwiających stosowanie różnych i~silnych danych logowania -- $15\%$.
 
 Częściowym rozwiązaniem tego problemu może być wprowadzenie dodatkowych warstw bezpieczeństwa bezpośrednio w~systemach uwierzytelniania
 w~celu utrudnienia uzyskania nieautoryzowanego dostępu do wrażliwych danych. Takie podejście pozwoli podnieść bezpieczeństwo wszystkich użytkowników,
@@ -30,8 +30,8 @@ Rezultatem wyjściowym algorytmów generacji $NDB$ jest zbiór ciągów tekstowy
 do zbioru formuł logicznych CNF, dlatego przeprowadzone zostały testy z~wykorzystaniem solwerów SAT mające na celu 
 zasymulowanie ataku na powstałą $NDB$.
 
-Koncept negatywnej reprezentacji danych wywodzi się z immunologii. Badania wykazały, że limfocyty $T$~wykorzystują
-podobny proces w celu rozróżnienia między sobą i~innymi komórkami \cite{T-cells}.
+Koncept negatywnej reprezentacji danych wywodzi się z~immunologii. Badania wykazały, że limfocyty $T$~wykorzystują
+podobny proces w~celu rozróżnienia między sobą i~innymi komórkami \cite{T-cells}.
 
 \section{Zawartość pracy}
 

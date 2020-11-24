@@ -143,7 +143,7 @@ Powoduje to, że algorytm uzyskiwania zbioru $DB$ z~otrzymanej $NDB$ nie wymaga 
 \end{algorithm}
 
 
-Czas wykonywania procedury wynosi $O(l|DB|)$, jednak w~przypadku zapisywania wyniku do bazy wzrasta do $O(l^2|DB|)$ gdyż konieczna jest serializacja każdego rekordu.
+Czas wykonywania procedury generacyjnej wynosi $O(l|DB|)$, jednak w~przypadku zapisywania wyniku do bazy wzrasta do $O(l^2|DB|)$ gdyż konieczna jest serializacja każdego rekordu.
 Złożoność pamięciowa dla optymalnej implementacji wynosi $O(l|DB|)$ w~przypadku gdy poprzednio generowane rekordy $NDB$ nie są przetrzymywane w~pamięci. 
 Dla danego zbioru $DB$ generowane jest $O(l|DB|)$ rekordów co sprowadza się do wielkości powstałej bazy danych wynoszącej $O(l^2|DB|)$.
 
@@ -364,8 +364,8 @@ w~czasie potęgowym tj. przez całkowite przeszukanie, co powoduje że dla odpow
 zabezpieczonego ciągu jest niepraktyczne.
 
 Takie podejście do problemu ma szereg konsekwencji. Pierwszą z~nich jest to że wielkość otrzymanej bazy
-nie zależy od przechowywanego rekordu i~można ją kontrolować za pomocą parametru $r$ 
-- generowane jest dokładnie $l * r$ rekordów. Nie ma jednak możliwości zawarcia w~jednej instancji $NDB$ 
+nie zależy od przechowywanego rekordu i~można ją kontrolować za pomocą parametru $r$~--~generowane
+jest dokładnie $l * r$ rekordów. Nie ma jednak możliwości zawarcia w~jednej instancji $NDB$ 
 więcej niż jednego ciągu bitowego - można zakodować jedynie zero lub jeden rekord.
 
 W~\cite{HARD-NDB} razem z~przedstawieniem algorytmu \ref{alg:qhidden} opisany jest przykładowe zastosowanie tego schematu 
