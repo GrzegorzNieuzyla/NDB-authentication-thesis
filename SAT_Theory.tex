@@ -62,7 +62,7 @@ Kwantyfikacja egzystencjalna jest klasą algorytmów upraszczających zadaną f
 W tym celu definiuje się operator $\exists$ zmiennej $P$ w~formule $\Delta$:
 \[ \exists P \Delta \stackrel{\text{def}}{=} (\Delta | P) \lor (\Delta | \neg P) \]
 gdzie operator '$|$' jest \textit{warunkowaniem} i~definiuje się je następująco:
-\[ \Delta | P \stackrel{\text{def}}{=} \{\alpha - \{\neg P\}~|~\alpha \in \Delta, P~\notin \alpha\} \]
+\[ \Delta | P = \{\alpha - \{\neg P\}~|~\alpha \in \Delta, P~\notin \alpha\} ~~\text{\cite{handbook-satifiability-complete}} \] 
 
 Proces wnioskowania można intuicyjnie przedstawić jako ustawienie zmiennej P~na wartość prawdziwą (lub fałszywą w~przypadku $\neg P$)
 i~zredukowanie zbioru klauzul usuwając te, które są spełnione oraz usuwając z~pozostałych literały mające wartość fałszywą.
@@ -83,7 +83,7 @@ co najmniej jeden pozostały literał musi się ewaluować do prawdy. Można zat
 Dana formuła jest niespełnialna wtedy i~tylko wtedy, gdy istnieje wnioskowanie prowadzące do pustej klauzuli, zatem po wyczerpaniu
 wszystkich możliwości wnioskowania możemy ustalić, że problem jest spełnialny. 
 
-Do algorytmów wykorzystujących tą metodę należą algorytm St{\aa}lmarcka i~HeerHugo.
+Do algorytmów wykorzystujących tę metodę należą algorytm St{\aa}lmarcka i~HeerHugo.
 
 \subsubsection{Przeszukiwanie}
 Problem SAT można przedstawić jako drzewo decyzyjne przypisania zmiennych, gdzie liście są wszystkimi możliwymi kombinacjami literałów.
@@ -127,36 +127,3 @@ innej klauzuli na niespełnioną. Jeśli nie została znaleziona, \textit{WalkSA
 zmiana spowoduję spełnienie jak największej ilości pozostałych klauzul. Wprowadzony jest dodatkowo parametr szumu $p \in [0, 1]$ określający
 jak często wybierane jest podejście nie-zachłanne. Dla losowych formuł 3SAT optymalna wartość szumu wynosi $p~=~0.57$ \cite{handbook-satifiability-incomplete}.
 
-
-
-\section{Wykorzystywanie solwerów SAT w~celu uzyskania przeciwobrazu Negatywnej Bazy Danych}
-
-Problem znalezienia ukrytego ciągu w~Negatywnej Bazie Danych jest równoważny SAT i~zapis napisów nad alfabetem 
-$\{0, 1, *\}$ można sprowadzić do CNF w~czasie liniowym.
- Dla przykładu, poniższy zbiór rekordów można zinterpretować jako 
- \enquote{Znajdź takie przypisanie wartościami \{0, 1\}, żeby dla każdego rekordu nie pokrywało się na co najmniej jednej pozycji}.
- 
-\begin{table}[h]
-
-    \centering
-    \label{Tbl:NDB-sat-example}
-    \begin{tabular}{|l|}
-    	\hline
-    	11*0 \\ \hline
-    	001* \\ \hline
-    	*111 \\ \hline
-    	*101 \\ \hline
-    \end{tabular}
-    \caption{Przykładowy zbiór rekordów $NDB$}
-\end{table}
-
-Zatem pomijając symbole $*$, zamieniając wartości $\{0,1\}$ na odpowiadające literały, negując je i~łącząc operatorem alternatywy
-oraz wstawiając operatory koniunkcji pomiędzy powstałe klauzule otrzymujemy postać CNF:
-
-\[ (\neg x_1 \lor \neg x_2 \lor x_4)~\land \]\[  (x_1 \lor x_2 \lor \neg x_3)~\land \]\[ (\neg x_2 \lor \neg x_3 \lor \neg x_4)~\land \]\[(\neg x_2 \lor x_3 \lor \neg x_4) \]
-
-
-Metoda działania solwerów SAT nie polega na znalezieniu wszystkich rozwiązań, tylko na sprawdzeniu czy dana formuła jest spełnialna, 
-dlatego w~sytuacji próby odwrócenia baz wielorekordowych lub wygenerowanych z~użyciem algorytmów niekompletnych atakujący potrzebuje dla każdego pojedynczego rozwiązania dodać dodatkową formułę przeczącą znalezionemu rekordowi i ponownie uruchomić solwer.   
-
-W związku z~faktem, że uzyskanie dostępu do nawet pojedynczego rekordu w~systemach uwierzytelniania jest niedopuszczalne, testy są przeprowadzone pod kątem znalezienia pierwszego rozwiązania. 
