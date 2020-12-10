@@ -1,5 +1,6 @@
 % !TeX spellcheck = pl_PL
 \chapter{Wprowadzenie}
+\label{chp:intro}
 \section{Cele pracy}
 Celem niniejszej pracy jest implementacja i~przetestowanie systemu uwierzytelniania oferującego większe bezpieczeństwo
 niż standardowy schemat generowania skrótu hasła za pomocą funkcji generacji klucza (np. \textit{PBKDF2}, \textit{bcrypt})
@@ -34,8 +35,18 @@ Koncept negatywnej reprezentacji danych wywodzi się z~immunologii. Badania wyka
 podobny proces w~celu rozróżnienia między sobą i~innymi komórkami \cite{T-cells}.
 
 \section{Zawartość pracy}
+Niniejsza praca jest podzielna na sześć rozdziałów. W~rozdziale \ref{chp:intro} przedstawiam obecne problemy występujące w~systemach uwierzytelniania i~wstępnie opisuję schemat działania Negatywnych Baz Danych.
 
+W~rozdziale \ref{chp:sat-theory} opisuję problem spełnialności oraz metody i~techniki stosowane przez współczesne solwery SAT.
 
+Rozdział \ref{chp:theory} poświęcony jest dostępnym w~literaturze algorytmom generacji Negatywnych Baz Danych. Porównywane są pod kątem teoretycznym na podstawie przytoczonych artykułów.
+
+Dokładne testy metod generacji $NDB$ są przedstawione w~rozdziale \ref{chp:tests}. Opisany tam jest wpływ wszystkich dostępnym parametrów na trudność ich odwrócenia za pomocą solwerów SAT zChaff oraz WalkSAT.
+Dodatkowo porównywane są metody zapobiegania występowaniu niepożądanych rekordów pozytywnych w~generowanej $NDB$.
+
+W rozdziale \ref{chp:implementation} opisuję stworzoną na potrzeby tej pracy implementację systemu uwierzytelniania wykorzystującą Negatywne Bazy Danych.
+
+Wnioski wyniesione z~analizowania konceptu $NDB$ i~pisania tej pracy znajdują się w~rozdziale \ref{chp:conclusion}.
 
 
 

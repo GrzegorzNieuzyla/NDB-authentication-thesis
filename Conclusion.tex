@@ -1,4 +1,20 @@
 % !TeX spellcheck = pl_PL
 \chapter{Wnioski}
+\label{chp:conclusion}
 \section{Bezpieczeństwo przedstawionej implementacji}
+Z~testów przedstawionych w~rozdziale \ref{chp:tests} wynika, że istnieją algorytmy $NDB$ pozwalające na generowanie trudnych formuł SAT, które są rozwiązywalne w czasie wykładniczym.
+Zostało to wykorzystane podczas implementacji aplikacji umożliwiającej uwierzytelnianie użytkowników za pomocą loginu i~hasła. Użycie $NDB$ zamiast pozytywnej bazy danych do składowania
+skrótu hasła nie zwiększa drastycznie bezpieczeństwa w~stosunku do dobrze zaprojektowanego systemu, używającego odpowiednich procedur kryptograficznych, w~szczególności algorytmu uzyskiwania klucza
+na podstawie hasła. Jednak obecność dodatkowej warstwy może odeprzeć atak na tak zaprojektowaną aplikację, gdy pozostałe metody zawiodą.
+
+Sam fakt użycia $NDB$ nie rozwiąże głównych problemów z systemami uwierzytelniania, zwłaszcza stosowania słabych i~przewidywalnych haseł, dlatego w~implementacji aplikacji wymuszam wybór fraz o~zwiększonej złożoności.
+Dodatkowo konieczność porównania klucza z~rekordami negatywnym może spowolnić próby złamania przez metody \textit{brute-force}.
+
+Negatywne bazy danych mogą oferować znacznie większą poprawę bezpieczeństwa w~systemach, w~których nie jest konieczne powiązanie rekordów z~dodatkowymi danymi.
+W~tym celu należy zrezygnować z~większości zalet posiadanych przez struktury przechowywania danych w~postaci pozytywnej i~zmodyfikować problem do takiego, który wykorzystuje tylko jedną operację -- sprawdzenie obecności danego rekordu w~bazie.
+
 \section{Możliwe rozszerzenia}
+Przedstawiona aplikacja, poza dodaniem referencji do dodatkowych danych opisujących użytkownika może być dowolnie zmodyfikowana w~celu spełnienia określonych wymagań biznesowych. 
+
+Jedną z opcji dalszego zwiększenia bezpieczeństwa może być zaimplementowanie 
+uwierzytelniania dwuskładnikowego, uniemożliwiającego dostęp do konta w przypadku uzyskania dostępu do tylko jednego składnika. Żeby zapewnić stosowanie dobrych nawyków podczas korzystania z~aplikacji możliwe jest także stworzenie modułu wymuszającego częste zmiany hasła.
