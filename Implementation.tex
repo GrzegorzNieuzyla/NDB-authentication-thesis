@@ -3,7 +3,7 @@
 \chapter{Implementacja systemu uwierzytelniania}
 \label{chp:implementation}
 W tym rozdziale przedstawiam system uwierzytelniania wykorzystujący $NDB$ jako formę składowania skrótu hasła. 
-Aplikacja nie składuje żadnych dodatkowych danych użytkownika, lecz może posłużyć jako baza dla systemów o~dokładniej sprecyzowanym zastosowaniu.
+Aplikacja nie przechowuje żadnych dodatkowych danych użytkownika, lecz może posłużyć jako baza dla systemów o~dokładniej sprecyzowanym zastosowaniu.
 
 Implementacja jest napisana w języku C++17 z~użyciem biblioteki Qt, pozwalającej na łatwe projektowanie interfejsu użytkownika oraz dostarczającej
 wszystkie wymagane procedury kryptograficzne.
@@ -11,7 +11,7 @@ wszystkie wymagane procedury kryptograficzne.
 Część danych użytkownika pozwalających na zalogowanie się do systemu znajdują się w zwykłej, relacyjnej bazie danych.
 W tym celu została użyta baza SQLite3, oferująca możliwość szybkiego wdrożenia bez konieczności złożonej konfiguracji systemu.
 W razie potrzeby przechowywania danych wielu klientów istnieje możliwość zamiany silnika bazy danych na bardziej 
-zoptymalizowany pod kątem przechowywania wielu rekordów oraz obsługujący większą ilość zapytań w jednym czasie.
+zoptymalizowany pod kątem przechowywania wielu rekordów oraz obsługujący większą liczbę zapytań w jednym czasie.
 
 
 \begin{figure}[h]
@@ -76,7 +76,7 @@ Po kliknięciu przycisku \textit{Logout} następuje zakończenie sesji i~umożli
 Za logikę uwierzytelniania odpowiedzialna jest klasa \textit{AuthenticationManager} oferująca metody do sprawdzenia poprawności danych, tworzenia i~usuwania kont oraz zmiany hasła. Wewnętrznie komunikuje się z klasą \textit{DatabaseAccess} będącą warstwą dostępu do użytej pozytywnej bazy danych.
 Obiekty opisujące poszczególne widoki tj. \textit{LoginScreen}, \textit{RegisterScreen} oraz \textit{UserScreen} są w hierarchi poniżej klasy okna głównego -- \textit{MainWindow}. Zbierają dane przekazane przez użytkownika z~odpowiednich pól interfejsu i~tworzą odpowiednie 
 zapytania do \textit{AuthenticationManager}.
-Przed oddelegowaniem do procedur tworzenia konta i~zmiany hasła dane muszą być zaklasyfikowane jako poprawne za pomocą klasy \textit{PasswordStrengthValidator}, sprawdzającej czy dane hasło spełnia zaprogramowane zasady bezpieczeństwa.
+Przed oddelegowaniem do procedur tworzenia konta i~zmiany hasła dane muszą być zweryfikowane jako poprawne za pomocą klasy \textit{PasswordStrengthValidator}, sprawdzającej czy dane hasło spełnia zaprogramowane zasady bezpieczeństwa.
 Żeby tworzenie hasła powiodło się musi mieć następujące cechy:
 \begin{itemize}
     \item Długość musi wynosić 8 lub więcej znaków

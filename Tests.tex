@@ -120,7 +120,7 @@ nodes near coords={
 \label{sec:red-str-test}
 Algorytmy generacji $NDB$ \textit{Q-Hidden} oraz \textit{K-Hidden} nie gwarantują pokrycia całego zbioru $U~-~DB$.
 Konieczne jest użycie odpowiedniej sumy kontrolnej. Po znalezieniu rozwiązania porównywany jest sufiks rekordu o~określonej
-długości z~wynikiem wykorzystanej funkcji na pozostałej części ciągu bitowego. Jeżeli wynik się zgadza napis jest uznawany na należący
+długości z~wynikiem wykorzystanej funkcji na pozostałej części ciągu bitowego. Jeżeli wynik się zgadza to napis jest uznawany za należący
 do $DB$.
 
 Zostały przetestowane następujące funkcje sumy kontrolnej:
@@ -135,19 +135,23 @@ Zostały przetestowane następujące funkcje sumy kontrolnej:
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Wpływ parametrów generacji na ilość niepożądanych ukrytych ciągów bitowych}
+\subsection{Wpływ parametrów generacji na liczbę niepożądanych ukrytych ciągów bitowych}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-Jak wynika z~testów, których wyniki są umieszczone na wykresach \ref{chrt:no-checksum-q-r} i~\ref{chrt:no-checksum-k-r}
-ilość nadmiarowych napisów ukrytych maleje wykładniczo wraz z~wzrostem parametru $r$. Dla ilości rekordów pięciokrotnie większej niż długość napisu
-zachowują się jedynie pojedyncze niepożądane ciągi. 
+Celem testu było sprawdzenie, jak zmiana poszczególnych parametrów generacji $NDB$ wpływa na liczbę zakodowanych pozytywnych ciągów różniących się
+od zadanego rekordu $s$. 
+
+W celu wyznaczenia dokładnych statystyk, stworzona baza negatywna sprowadzana jest do problemu SAT i~rozwiązywana za pomocą solwera zChaff.  
+Po uzyskaniu pojedynczego rozwiązania do bazy wprowadzana jest nowa klauzula CNF -- alternatywa negacji bitów ciągu, która usuwa dany rekord ze zbioru $DB$. Poprzednie kroki są powtarzane, aż otrzymana formuła będzie niespełnialna. 
+
+Rezultatem działania tej procedury jest pełny zbiór $DB$ dla danej bazy, którego wielkość (z wyłączeniem oryginalnego rekordu) jest szukaną miarą.
 
 \begin{figure}[!h]
 \begin{subfigure}{0.5\textwidth}
     \captionsetup{width=7cm}
     \centering
     \begin{tikzpicture}[xscale=0.9,yscale=0.9]
-    \begin{semilogyaxis}[ylabel = {Średnia ilość nadmiarowych napisów}, xlabel={r}]
+    \begin{semilogyaxis}[ylabel = {Średnia liczba nadmiarowych napisów}, xlabel={r}]
         \addplot[
     color=black,
     mark=*,
@@ -184,7 +188,7 @@ zachowują się jedynie pojedyncze niepożądane ciągi.
 \begin{subfigure}{0.5\textwidth}
     \centering
     \begin{tikzpicture}[xscale=0.9,yscale=0.9]
-    \begin{semilogyaxis}[ylabel = {Średnia ilość nadmiarowych napisów}, xlabel={r}]
+    \begin{semilogyaxis}[ylabel = {Średnia liczba nadmiarowych napisów}, xlabel={r}]
     
     \addplot[
     color=black,
@@ -219,7 +223,7 @@ zachowują się jedynie pojedyncze niepożądane ciągi.
     \caption{K-Hidden}    
     \label{chrt:no-checksum-k-r}
 \end{subfigure}
-\caption{Zależność ilości nadmiarowych napisów od współczynnika ilości rekordów $r$~dla $NDB$ 
+\caption{Zależność liczby nadmiarowych napisów od współczynnika ilości rekordów $r$~dla $NDB$ 
     wygenerowanych przez algorytm \textit{Q-Hidden} i~\textit{K-Hidden} o~parametrach $q=0.4$~/~$p~=~\{0.7, 0.2, 0.1\}$~i~$k~=~3$.}
 \end{figure}
 
@@ -228,7 +232,7 @@ zachowują się jedynie pojedyncze niepożądane ciągi.
     \captionsetup{width=7cm}
     \centering
     \begin{tikzpicture}[xscale=0.9, yscale=0.9]
-    \begin{axis}[ylabel = {Mediana ilości nadmiarowych napisów}, xlabel={l}, legend style={at={(0.03,0.8)},anchor=west}
+    \begin{axis}[ylabel = {Mediana liczby nadmiarowych napisów}, xlabel={l}, legend style={at={(0.03,0.8)},anchor=west}
     ]
     
     \addplot[
@@ -266,7 +270,7 @@ zachowują się jedynie pojedyncze niepożądane ciągi.
     \centering
     \captionsetup{width=7cm}
     \begin{tikzpicture}[xscale=0.9, yscale=0.9]
-    \begin{axis}[ylabel = {Mediana ilości nadmiarowych napisów}, xlabel={l}, legend style={at={(0.03,0.8)},anchor=west}
+    \begin{axis}[ylabel = {Mediana liczby nadmiarowych napisów}, xlabel={l}, legend style={at={(0.03,0.8)},anchor=west}
     ]
     
     \addplot[
@@ -299,14 +303,18 @@ zachowują się jedynie pojedyncze niepożądane ciągi.
     \caption{K-Hidden}
     \label{chrt:no-checksum-k-l}
 \end{subfigure}
-\caption{Zależność ilości nadmiarowych napisów od ilości rekordów $l$~dla $NDB$
+\caption{Zależność liczby nadmiarowych napisów od długości rekordu $l$~dla $NDB$
     wygenerowanych przez algorytm \textit{Q-Hidden} i~\textit{K-Hidden} o~parametrach $q~=~0.3$~/~$p~=~\{0.7,~0.2,~0.1\}$~i~$k~=~3$.}
 \end{figure}
 
-Długość rekordu także ma znaczny wpływ na ich ilość, zwłaszcza dla małych wartości $r$, jednak przeprowadzanie testów dla całego przedziału $r \in [1, 10]$ dla $l > 24$ jest niepraktyczne ze względu na złożoność obliczeniową. 
+Jak wynika z~testów, których wyniki są umieszczone na wykresach \ref{chrt:no-checksum-q-r} i~\ref{chrt:no-checksum-k-r}
+liczba nadmiarowych napisów ukrytych maleje wykładniczo wraz z~wzrostem parametru $r$. Dla liczby rekordów pięciokrotnie większej niż długość napisu
+zachowują się jedynie pojedyncze niepożądane ciągi. 
 
-Wraz ze wzrostem parametru $r$ zwiększa się wartość progowa długości rekordu, której przekroczenie powoduje znaczne zwiększenie tempa przyrostu ilości napisów nienależących do $DB$.
-Jak wynika z~wykresów \ref{chrt:no-checksum-q-l} i~\ref{chrt:no-checksum-k-l} dla wartości $r=5$ pochodna funkcji wzrasta przy $l \approx 100$ a~dla $r=5.5$ przy $l \approx 150$.
+Długość rekordu także ma znaczny wpływ na ich liczbę, zwłaszcza dla małych wartości $r$, jednak przeprowadzanie testów dla całego przedziału $r \in [1, 10]$ dla $l > 24$ jest niepraktyczne ze względu na złożoność obliczeniową. 
+
+Wraz ze wzrostem parametru $r$ zwiększa się wartość progowa długości rekordu, której przekroczenie powoduje znaczne zwiększenie tempa przyrostu liczby napisów nienależących do $DB$.
+Jak wynika z~wykresów \ref{chrt:no-checksum-q-l} i~\ref{chrt:no-checksum-k-l} dla wartości $r=5$ nachylenie funkcji wzrasta przy $l \approx 100$ a~dla $r=5.5$ przy $l \approx 150$.
 
 Z powodu znacznej fluktuacji wyników aby przedstawić dokładną tendencję konieczne było zastosowanie mediany zamiast wartości średniej. 
 
@@ -315,15 +323,10 @@ Negatywne Bazy Danych wygenerowane przez algorytm \textit{Q-Hidden} i~\textit{K-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Skuteczność funkcji sum kontrolnych}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Wynik porównania różnych metod sumy kontrolnej pokrywa się z intuicją, według której każdy dodatkowy bit zmniejsza ilość ciągów bitowych
-nienależących do $DB$ o~połowę. Wynika z~tego, że funkcja skrótu o~długości 32 bitów, jest wystarczająca, żeby zapewnić spójność bazy danych
-przy zastosowaniach w~których nie trzeba przechowywać danych krytycznych.
-
-W systemach uwierzytelniania zalecane jest jednak użycie większej wartości w~celu zredukowania szansy konfliktu danych do praktycznie niemożliwej.  
 \begin{figure}[!h]
     \centering
     \begin{tikzpicture}
-    \begin{semilogyaxis}[ylabel = {Średnia ilość nadmiarowych napisów}, xlabel={r}, legend style={font=\small}]
+    \begin{semilogyaxis}[ylabel = {Średnia liczba nadmiarowych napisów}, xlabel={r}, legend style={font=\small}]
     
     
     \addplot[
@@ -361,17 +364,33 @@ W systemach uwierzytelniania zalecane jest jednak użycie większej wartości w~
     
     \end{semilogyaxis}
     \end{tikzpicture}
-    \caption{Zależność ilości nadmiarowych napisów od współczynnika ilości rekordów $r$~i~metody sumy kontrolnej.
-        $NDB$ zostały wygenerowane przez algorytm \textit{K-Hidden} o~parametrach  $p~=~\{0.7, 0.2, 0.1\}$~i~$k~=~3$ oraz \textit{Q-Hidden}
+    \caption{Zależność liczby  nadmiarowych napisów od współczynnika ilości rekordów $r$~i~metody sumy kontrolnej.
+        Dla każdego punktu na wykresie wygenerowane zostało 10 $NDB$ przez algorytm \textit{K-Hidden} o~parametrach  $p~=~\{0.7, 0.2, 0.1\}$~i~$k~=~3$ 
+        oraz 10 przez \textit{Q-Hidden}
         o~parametrach $q=0.3$ i~$k=3$. Dla CRC-32 oraz MD5 nie zostały wykryte żadne nadmiarowe napisy.
     }
     \label{chrt:no-checksum-k-l}
 \end{figure}
+Wynik porównania różnych metod sumy kontrolnej pokrywa się z intuicją, według której każdy dodatkowy bit zmniejsza liczbę ciągów bitowych
+nienależących do $DB$ o~połowę. Wynika z~tego, że funkcja skrótu o~długości 32 bitów, jest wystarczająca, żeby zapewnić spójność bazy danych
+przy zastosowaniach w~których nie trzeba przechowywać danych krytycznych.
+
+W systemach uwierzytelniania zalecane jest jednak użycie większej wartości w~celu zredukowania szansy konfliktu danych do praktycznie niemożliwej.  
 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Testy algorytmów generacji $NDB$}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+W~tym rozdziale opisuję wyniki testów poszczególnych algorytmów pod kątem odporności na odwrócenie. 
+W~tym celu pokazuję jak zmiana parametrów wpływa na czas znalezienia pierwszego rozwiązania przez solwery SAT i~na wymaganą do tego liczbę operacji.
+
+Pojedynczą operacją w solwerze zChaff jest decyzja -- polega na wybraniu niewykorzystanej zmiennej i~przypisaniu określonej wartości logicznej \cite{chaff}. 
+W~przypadku WalkSAT operacją jest odwrócenie przypisań (\textit{flip}) opisane w rozdziale \ref{sec:gsat}.
+
+Dodatkowo przedstawiam złożoności czasowe samego etapu generacji w zależności od ustawionych parametrów.
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Algorytm prefiksowy}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -485,14 +504,14 @@ Generacja ma stosunkową niską złożoność czasową, nawet dla bardzo długi
     \caption{WalkSAT}
     \label{chrt:prefix-time-w}
 \end{subfigure}
-\caption{Zależność czasu koniecznego do znalezienia pierwszego rozwiązania od długości ciągu i~ilości rekordów dla $NDB$ wygenerowanych za pomocą algorytmu prefiksowego.}
+\caption{Zależność czasu koniecznego do znalezienia pierwszego rozwiązania od długości ciągu i~liczby rekordów dla $NDB$ wygenerowanych za pomocą algorytmu prefiksowego.}
 \end{figure}
 \begin{figure}[!htb]
 \begin{subfigure}{0.5\textwidth}
     \captionsetup{width=7cm}
     \centering
     \begin{tikzpicture}[xscale=0.9,yscale=0.9]
-    \begin{axis}[ylabel={Średnia ilość decyzji}, xlabel={l}, legend style={at={(0.03,0.8)}, anchor=west}]
+    \begin{axis}[ylabel={Średnia liczba decyzji}, xlabel={l}, legend style={at={(0.03,0.8)}, anchor=west}]
     \addplot[
     color=black,
     mark=square,
@@ -559,12 +578,12 @@ Generacja ma stosunkową niską złożoność czasową, nawet dla bardzo długi
     \caption{WalkSAT}
     \label{chrt:prefix-flips}
 \end{subfigure}
-\caption{Zależność liczby decyzji/odwróceń przypisań od długości ciągu i~ilości rekordów dla $NDB$ wygenerowanych za pomocą algorytmu prefiksowego.}
+\caption{Zależność liczby decyzji/odwróceń przypisań od długości ciągu i~liczby rekordów dla $NDB$ wygenerowanych za pomocą algorytmu prefiksowego.}
 \end{figure}
 
 
 Kompletny solwer zChaff odwraca $NDB$ z~jednym rekordem pozytywnym niemal natychmiast -- dla każdego przypadku została podjęta tylko jedna decyzja.
-Przy zawarciu większej ilości napisów znalezienie jednego z~nich staje się trudniejsze, jednak jest to nadal możliwe w~czasie liniowym.
+Przy zawarciu większej liczby napisów znalezienie jednego z~nich staje się trudniejsze, jednak jest to nadal możliwe w~czasie liniowym.
 
 Natomiast dla solwera WalkSAT otrzymana struktura CNF jest problematyczna -- procedura degraduje się w~kierunku losowego przeszukiwania o~wykładniczej złożoności obliczeniowej.
 Już dla stu napisów o~długości 40 bitów metoda kończy działanie z~powodu przekroczenia ustawionej na potrzeby testów wartości granicznej 10 prób po $10^9$ odwróceń przypisań.
@@ -577,10 +596,10 @@ Już dla stu napisów o~długości 40 bitów metoda kończy działanie z~powodu 
 Algorytm \textit{Randomize\_NDB} generuje bazy danych o~znacznie większym rozmiarze niż algorytm prefiksowy. Już dla 25 rekordów, każdy o~długości co najmniej 300 bitów, czas trwania procedury generacyjnej przekracza godzinę,
 podczas, gdy czas rozwiązywania bazy o~takich parametrach zajmuje solwerowi zChaff niecałe dwie sekundy. Dla ukrywania pojedynczych rekordów procedura działa niewiele wolniej niż algorytm prefiksowy, ale wynikowa $NDB$ będzie bardzo prosta do złamania.
 
-Złożoność otrzymanej bazy zależy głównie od ilości zawartych rekordów pozytywnych, ale czas generacji rośnie dużo szybciej niż trudność problemu SAT. z~wykresu \ref{chrt:rand-time-z} na pierwszy rzut oka wynika, że dla większych wartości $l$ czas rozwiązania znacznie wzrasta, ale jest to spowodowane
+Złożoność otrzymanej bazy zależy głównie od liczby zawartych rekordów pozytywnych, ale czas generacji rośnie dużo szybciej niż trudność problemu SAT. Z~wykresu \ref{chrt:rand-time-z} na pierwszy rzut oka wynika, że dla większych wartości $l$ czas rozwiązania znacznie wzrasta, ale jest to spowodowane
 procesem przetwarzania wstępnego solwera zChaff -- dla wszystkich pokazanych przykładów liczba podjętych decyzji nie przekracza pięciu.
 
-Solwer WalkSAT podobnie jak w~przypadku algorytmu prefiksowego wypada znacznie gorzej niż zChaff, jednak tym razem potrafi w~krótkim czasie odwrócić $NDB$ przy $l=100$ i~niewielkiej ilości rekordów pozytywnych, jednak wraz ze wzrostem $c$ złożoność obliczeniowa zwiększa się drastycznie.
+Solwer WalkSAT podobnie jak w~przypadku algorytmu prefiksowego wypada znacznie gorzej niż zChaff, jednak tym razem potrafi w~krótkim czasie odwrócić $NDB$ przy $l=100$ i~niewielkiej liczbie rekordów pozytywnych, jednak wraz ze wzrostem $c$ złożoność obliczeniowa zwiększa się drastycznie.
 
 \begin{figure}[!h]
     \centering
@@ -691,7 +710,7 @@ Solwer WalkSAT podobnie jak w~przypadku algorytmu prefiksowego wypada znacznie g
     \caption{WalkSAT}
     \label{chrt:rand-time-w}
 \end{subfigure}
-\caption{Zależność czasu koniecznego do znalezienia pierwszego rozwiązania od długości ciągu i~ilości rekordów dla $NDB$ wygenerowanych za pomocą algorytmu \textit{Randomize\_NDB}.}
+\caption{Zależność czasu koniecznego do znalezienia pierwszego rozwiązania od długości ciągu i~liczby rekordów dla $NDB$ wygenerowanych za pomocą algorytmu \textit{Randomize\_NDB}.}
 \end{figure}
 
 \begin{figure}[!h]
@@ -725,7 +744,7 @@ Solwer WalkSAT podobnie jak w~przypadku algorytmu prefiksowego wypada znacznie g
     \addlegendentry{$c = 25$}
     \end{axis}
     \end{tikzpicture}
-    \caption{Zależność liczby odwróceń przypisań wykonanych przez solwer WalkSAT od długości ciągu i~ilości rekordów dla $NDB$ wygenerowanych za pomocą algorytmu \textit{Randomize\_NDB}.}
+    \caption{Zależność liczby odwróceń przypisań wykonanych przez solwer WalkSAT od długości ciągu i~liczby rekordów dla $NDB$ wygenerowanych za pomocą algorytmu \textit{Randomize\_NDB}.}
     \label{chrt:rand-flips}
 \end{figure}
 
@@ -772,10 +791,10 @@ Znacznie zredukowanie liczby rekordów negatywnych powoduje też skrócenie czas
     \label{chrt:q-gen}
 \end{figure}
 
-Algorytm \textit{Q-Hidden} tworzy bazy o~dowolnie konfigurowanej, stałej liczbie rekordów. Generacja $NDB$ jest bardzo szybka i~dokonuje się w czasie liniowym od iloczynu parametrów $r$ oraz $l$.
+Algorytm \textit{Q-Hidden} tworzy bazy o~dowolnie konfigurowanej, stałej liczbie rekordów. Generacja $NDB$ jest bardzo szybka i~dokonuje się w czasie zależnym liniowo od iloczynu parametrów $r$ oraz $l$.
 
 Głównymi czynnikami regulującymi złożoność $NDB$ wygenerowanej przez \textit{Q-Hidden} są parametry $q$ -- kontrolujący jak często ustalone literały w~rekordach negatywnych będą się pokrywać z~ukrytym napisem, oraz $r$
--- regulujący wielkość otrzymanej bazy. Wyniki testu badającego wpływ tego parametru są przedstawione na wykresach \ref{chrt:q-q-z} i~\ref{chrt:q-q-w}. Wynika z~nich, że przedział zapewniający największe bezpieczeństwo zawiera się między $q=0.35$ a~$q=0.5$
+-- regulujący wielkość otrzymanej bazy. Wyniki testu badającego wpływ parametru $q$~są przedstawione na wykresach \ref{chrt:q-q-z} i~\ref{chrt:q-q-w}. Wynika z~nich, że przedział zapewniający największe bezpieczeństwo zawiera się między $q=0.35$ a~$q=0.5$
 
 Parametr wielkości generowanej bazy $r$ musi być dostatecznie duży, żeby pokryta została jak największa część $U - DB$, oraz jednocześnie na tyle niewielki, żeby nie zawrzeć nadmiarowych informacji, które mogą zostać wykorzystane przez solwer SAT.
 Eksperyment, którego wynik jest przedstawiony na wykresach \ref{chrt:q-r-z} oraz \ref{chrt:q-r-w} dowodzi, że najbardziej optymalną wartością jest $r=4.5$.
@@ -784,7 +803,7 @@ Eksperyment, którego wynik jest przedstawiony na wykresach \ref{chrt:q-r-z} ora
     \centering
     \captionsetup{width=7cm}
     \begin{tikzpicture}[xscale=0.9, yscale=0.9]
-    \begin{axis}[ylabel={Średnia ilość decyzji}, xlabel={q}]
+    \begin{axis}[ylabel={Średnia liczba decyzji}, xlabel={q}]
     \addplot[
     color=black,
     mark=square,
@@ -828,7 +847,7 @@ Eksperyment, którego wynik jest przedstawiony na wykresach \ref{chrt:q-r-z} ora
     \centering
     \captionsetup{width=7cm}
     \begin{tikzpicture}[xscale=0.9, yscale=0.9]
-    \begin{axis}[ylabel={Średnia ilość odwróceń przypisań}, xlabel={q}]
+    \begin{axis}[ylabel={Średnia liczba odwróceń przypisań}, xlabel={q}]
     \addplot[
     color=black,
     mark=square,
@@ -868,7 +887,7 @@ Eksperyment, którego wynik jest przedstawiony na wykresach \ref{chrt:q-r-z} ora
     \centering
     \captionsetup{width=7cm}
     \begin{tikzpicture}[xscale=0.9, yscale=0.9]
-    \begin{axis}[ylabel={Średnia ilość decyzji}, xlabel={r}]
+    \begin{axis}[ylabel={Średnia liczba decyzji}, xlabel={r}]
     \addplot[
     color=black,
     mark=square,
@@ -904,7 +923,7 @@ Eksperyment, którego wynik jest przedstawiony na wykresach \ref{chrt:q-r-z} ora
     \centering
     \captionsetup{width=7cm}
     \begin{tikzpicture}[xscale=0.9, yscale=0.9]
-    \begin{axis}[ylabel={Średnia ilość odwróceń przypisań}, xlabel={r}]
+    \begin{axis}[ylabel={Średnia liczba odwróceń przypisań}, xlabel={r}]
     \addplot[
     color=black,
     mark=square,
@@ -948,7 +967,7 @@ $NDB$ jest odwracana niemal natychmiast.
     \captionsetup{width=7cm}
     \centering
     \begin{tikzpicture}[xscale=0.9, yscale=0.9]
-    \begin{axis}[ylabel={Średnia ilość decyzji}, xlabel={k}]
+    \begin{axis}[ylabel={Średnia liczba decyzji}, xlabel={k}]
     \addplot[
     color=black,
     mark=square,
@@ -984,7 +1003,7 @@ $NDB$ jest odwracana niemal natychmiast.
     \centering
     \captionsetup{width=7cm}
     \begin{tikzpicture}[xscale=0.9, yscale=0.9]
-    \begin{axis}[ylabel={Średnia ilość odwróceń przypisań}, xlabel={k}]
+    \begin{axis}[ylabel={Średnia liczba odwróceń przypisań}, xlabel={k}]
     \addplot[
     color=black,
     mark=square,
@@ -1053,7 +1072,7 @@ Po wykonaniu powyższej analizy można stwierdzić, że optymalne parametry dla 
         \centering
         \captionsetup{width=7cm}
         \begin{tikzpicture}[xscale=0.9, yscale=0.9]
-        \begin{axis}[ylabel={Ilość $NDB$ odróconych w~czasie $\leq $1h}, xlabel={l},  legend style={at={(0.03,0.2)}, anchor=west}]
+        \begin{axis}[ylabel={Liczba $NDB$ odwróconych w~czasie $\leq $1h}, xlabel={l},  legend style={at={(0.03,0.2)}, anchor=west}]
         \addplot[
         color=black,
         mark=square,
@@ -1085,7 +1104,6 @@ do osiągnięcia limitu operacji (10 prób po $2*10^9$ odwróceń), ale łatwe i
 
 Z powyższej analizy można wywnioskować, że tak wygenerowane $NDB$ dla rekordów o~długości od 600-700 bitów mogą oferować satysfakcjonującą odporność na odwrócenie. 
 
-\pagebreak
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1203,7 +1221,7 @@ Test został również przeprowadzony dla $k = 4$, ale rezultat okazał się ana
         \centering
         \captionsetup{width=7cm}
         \begin{tikzpicture}[xscale=0.9, yscale=0.9]
-        \begin{axis}[ylabel={Ilość $NDB$ odróconych w~czasie $\leq $1h}, xlabel={l},  legend style={at={(0.03,0.2)}, anchor=west}]
+        \begin{axis}[ylabel={Liczba $NDB$ odwróconych w~czasie $\leq $1h}, xlabel={l},  legend style={at={(0.03,0.2)}, anchor=west}]
         \addplot[
         color=black,
         mark=square,
@@ -1238,7 +1256,7 @@ wykresach \ref{chrt:k-l} i~\ref{chrt:k-l1h} wykazuje istnienie wykładniczej zł
 \subsection{Algorytm hybrydowy} \label{sec:test-hybrid}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-Algorytm hybrydowy jest połączeniem \textit{Q-Hidden} i~zmodyfikowanego algorytmu prefiksowego. Powstała baza jest konkatenacją kompletnej $NDB$ i~wyniku algorytmu \textit{Q-Hidden} z~zmniejszoną ilością rekordów w~celu poprawnego
+Algorytm hybrydowy jest połączeniem \textit{Q-Hidden} i~zmodyfikowanego algorytmu prefiksowego. Powstała baza jest konkatenacją kompletnej $NDB$ i~wyniku algorytmu \textit{Q-Hidden} z~zmniejszoną liczbą rekordów w~celu poprawnego
 działania parametru $r$.
 
 Niekompletność jest znaczną wadą przetestowanych wcześniej optymalnych metod generacji, dlatego istnienie bezpiecznego algorytmu gwarantującego pokrycie całego zbioru $U - \{s\}$ okazałoby się przydatne 
@@ -1282,7 +1300,7 @@ w~systemach uwierzytelniania.
         \captionsetup{width=7cm}
         \centering
         \begin{tikzpicture}[xscale=0.9, yscale=0.9]
-        \begin{axis}[ylabel={Średnia ilość decyzji}, xlabel={q}]
+        \begin{axis}[ylabel={Średnia liczba decyzji}, xlabel={q}]
         \addplot[
         color=black,
         mark=square,
@@ -1318,7 +1336,7 @@ w~systemach uwierzytelniania.
         \centering
         \captionsetup{width=7cm}
         \begin{tikzpicture}[xscale=0.9, yscale=0.9]
-        \begin{axis}[ylabel={Średnia ilość odwróceń przypisań}, xlabel={q}]
+        \begin{axis}[ylabel={Średnia liczba odwróceń przypisań}, xlabel={q}]
         \addplot[
         color=black,
         mark=square,
@@ -1358,7 +1376,7 @@ w~systemach uwierzytelniania.
         \captionsetup{width=7cm}
         \centering
         \begin{tikzpicture}[xscale=0.9, yscale=0.9]
-        \begin{axis}[ylabel={Średnia ilość decyzji}, xlabel={r}, legend style={at={(0.5,0.98)}, anchor=north}]
+        \begin{axis}[ylabel={Średnia liczba decyzji}, xlabel={r}, legend style={at={(0.5,0.98)}, anchor=north}]
         \addplot[
         color=black,
         mark=square,
@@ -1394,7 +1412,7 @@ w~systemach uwierzytelniania.
         \centering
         \captionsetup{width=7cm}
         \begin{tikzpicture}[xscale=0.9, yscale=0.9]
-        \begin{axis}[ylabel={Średnia ilość odwróceń przypisań}, xlabel={r}, legend style={at={(0.6,0.7)}, anchor=center}]
+        \begin{axis}[ylabel={Średnia liczba odwróceń przypisań}, xlabel={r}, legend style={at={(0.6,0.7)}, anchor=center}]
         \addplot[
         color=black,
         mark=square,
@@ -1431,7 +1449,7 @@ w~systemach uwierzytelniania.
 
 Z testów wynika jednak, że pomimo znacznej odporności na odwrócenie przez solwer WalkSAT, to podejście posiada te same wady co algorytm prefiksowy. Podczas analizy eksperymentalnej za pomocą solwera zChaff
 nie znaleziono żadnej kombinacji parametrów pozwalających na uzyskanie wykładniczej złożoności obliczeniowej. Jest to najprawdopodobniej spowodowane faktem, że w~zbiorze rekordów $NDB$ jest ukryty łatwy do odwrócenia podzbiór.
-Jedną z~poszlak wskazujących na to jest niewielki wpływ parametrów $q$ i~$r$ na ilość wykonanych decyzji przed znalezieniem rozwiązania. Żadne tendencje odnalezione podczas testów \textit{Q-Hidden} i~\textit{K-Hidden} 
+Jedną z~poszlak wskazujących na to jest niewielki wpływ parametrów $q$ i~$r$ na liczbę wykonanych decyzji przed znalezieniem rozwiązania. Żadne tendencje odnalezione podczas testów \textit{Q-Hidden} i~\textit{K-Hidden} 
 nie występują w~tym przypadku, co potwierdza że z~punktu widzenia solwera \textit{zChaff} \enquote{bezpieczna} część $NDB$ ma niewielki wpływ na zadany problem SAT. 
 
 Końcowy test tego algorytmu pokazany na wykresach \ref{chrt:hybrid-l-z} i~\ref{chrt:hybrid-l-w} udowadnia, że tak wygenerowany problem SAT pozostaje łatwy nawet dla bardzo dużych długości rekordów. 
@@ -1441,7 +1459,7 @@ Każda przetestowana $NDB$ została odwrócona w~mniej niż dwie milisekundy prz
         \captionsetup{width=7cm}
         \centering
         \begin{tikzpicture}[xscale=0.9, yscale=0.9]
-        \begin{axis}[ylabel={Średnia ilość decyzji}, xlabel={l},  legend style={at={(0.1,0.7)}, anchor=west}]
+        \begin{axis}[ylabel={Średnia liczba decyzji}, xlabel={l},  legend style={at={(0.1,0.7)}, anchor=west}]
         \addplot[
         color=black,
         mark=square,
@@ -1477,7 +1495,7 @@ Każda przetestowana $NDB$ została odwrócona w~mniej niż dwie milisekundy prz
         \centering
         \captionsetup{width=7cm}
         \begin{tikzpicture}[xscale=0.9, yscale=0.9]
-        \begin{axis}[ylabel={Średnia ilość odwróceń przypisań}, xlabel={l},  legend style={at={(0.95,0.3)}, anchor=east}]
+        \begin{axis}[ylabel={Średnia liczba odwróceń przypisań}, xlabel={l},  legend style={at={(0.95,0.3)}, anchor=east}]
         \addplot[
         color=black,
         mark=square,

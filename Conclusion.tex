@@ -1,6 +1,15 @@
 % !TeX spellcheck = pl_PL
-\chapter{Wnioski}
+\chapter{Podsumowanie}
 \label{chp:conclusion}
+Analiza dostępnych algorytmów generacji Negatywnych Baz Danych miała na celu znalezienie rozwiązania umożliwiającego zaimplementowanie bezpiecznego systemu uwierzytelniania użytkownika.
+Głównym założeniem było istnienie negatywnej reprezentacji informacji, która zagwarantuje że pierwotna postać danych będzie trudna do odzyskania.
+
+Po przetestowaniu odnalezionych w~literaturze metod generacji $NDB$ udało się znaleźć odpowiedni algorytm oraz kombinację parametrów tworzących bazy, które nie są łatwo odwracalne przez solwery SAT. 
+Pozwoliło to na zaimplementowanie aplikacji przechowującej skróty haseł w~formie negatywnej i~oferującej wszystkie funkcje oczekiwane od systemu uwierzytelniania. 
+
+W~ramach niniejszej pracy zrealizowane zostały testy $NDB$ wygenerowanych przez poszczególne metody generacji (algorytm prefiksowy, \textit{Randomize\_NDB}, \textit{Q-Hidden}, \textit{K-Hidden} i~algorytm hybrydowy) pod kątem trudności odwrócenia. 
+Na ich podstawie stworzona została w~pełni funkcjonalna propozycja systemu uwierzytelniania oferująca interfejs graficzny i podstawowe funkcjonalności zarządzania kontem użytkownika.
+
 \section{Bezpieczeństwo przedstawionej implementacji}
 Z~testów przedstawionych w~rozdziale \ref{chp:tests} wynika, że istnieją algorytmy $NDB$ pozwalające na generowanie trudnych formuł SAT, które są rozwiązywalne w czasie wykładniczym.
 Zostało to wykorzystane podczas implementacji aplikacji umożliwiającej uwierzytelnianie użytkowników za pomocą loginu i~hasła. Użycie $NDB$ zamiast pozytywnej bazy danych do składowania

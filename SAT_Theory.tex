@@ -17,9 +17,7 @@ Wyrażenia wykorzystywane w~problemie SAT składają się z:
 
 Formuły SAT przedstawia się w~postaci CNF (koniunkcyjna postać normalna, ang. \textit{conjunctive normal form}) 
 której struktura jest następująca: formuła jest koniunkcją klauzul, a~klauzula jest alternatywą literałów (tj. zmiennych lub ich negacji):
-
 \[ (x_{11} \lor x_{12} \lor \dots \lor x_{1n} ) \land (x_{21} \lor x_{22} \lor \dots \lor x_{2n} ) \land  \dots \land (x_{m1} \lor x_{m2} \lor \dots \lor x_{mn} ) \]
-
 
 Naiwny algorytm SAT jest trywialny -~wystarczy dla każdej możliwej kombinacji zmiennych $x_1 \dots x_n$
 sprawdzić czy formuła jest spełnialna. Sprawdzenie następuje w~czasie liniowym od wartości $n$, zatem cały algorytm
@@ -116,6 +114,7 @@ Czołowymi solwerami z~tej kategorii są \textit{GSAT} i~\textit{WalkSAT} \cite{
 
 
 \subsubsection{\textit{GSAT}}
+\label{sec:gsat}
 Schemat działania \textit{GSAT} polega na wygenerowaniu losowego przypisania i~zachłannym \textit{odwracaniu} (ang. \textit{flipping})
 wartości zmiennych w~celu zminimalizowania liczby niespełnionych klauzul. Ilość odwróceń oraz liczbę prób
 z~wygenerowaniem nowego ciągu początkowego można modyfikować za pomocą odpowiednich parametrów.
@@ -124,6 +123,6 @@ z~wygenerowaniem nowego ciągu początkowego można modyfikować za pomocą odpo
 \textit{WalkSAT} rozszerza algorytm stopniowego odwracania zmiennych używany w~\textit{GSAT}, redukując stopień zachłanności.
 Na początku każdej iteracji wybierana jest losowa klauzula, i~w~niej szukana jest zmienna, której zanegowanie nie zmieni żadnej
 innej klauzuli na niespełnioną. Jeśli nie została znaleziona, \textit{WalkSAT} wybiera z~danej klauzuli losową zmienną lub taką, której
-zmiana spowoduję spełnienie jak największej ilości pozostałych klauzul. Wprowadzony jest dodatkowo parametr szumu $p \in [0, 1]$ określający
+zmiana spowoduję spełnienie jak największej liczby pozostałych klauzul. Wprowadzony jest dodatkowo parametr szumu $p \in [0, 1]$ określający
 jak często wybierane jest podejście nie-zachłanne. Dla losowych formuł 3SAT optymalna wartość szumu wynosi $p~=~0.57$ \cite{handbook-satifiability-incomplete}.
 

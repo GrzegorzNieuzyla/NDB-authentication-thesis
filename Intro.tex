@@ -2,10 +2,6 @@
 \chapter{Wprowadzenie}
 \label{chp:intro}
 \section{Cele pracy}
-Celem niniejszej pracy jest implementacja i~przetestowanie systemu uwierzytelniania oferującego większe bezpieczeństwo
-niż standardowy schemat generowania skrótu hasła za pomocą funkcji generacji klucza (np. \textit{PBKDF2}, \textit{bcrypt})
-i~przechowywaniu w~standardowej (pozytywnej) bazie danych.
-    
 Jak wynika z~raportu Google\cite{google-poll}, większość internautów ma problem z~zachowaniem zasad bezpieczeństwa dotyczącego 
 używania mediów społecznościowych i~portali internetowych. $66\%$ procent badanych przyznało się do używania jednego hasła do różnych kont. 
 W~przypadku wykradzenia bazy danych pojedynczego portalu i~uzyskaniu postaci jawnych haseł istnieje ryzyko uzyskania dostępu również do innych aplikacji
@@ -20,8 +16,20 @@ umożliwiających stosowanie różnych i~silnych danych logowania -- $15\%$.
 Częściowym rozwiązaniem tego problemu może być wprowadzenie dodatkowych warstw bezpieczeństwa bezpośrednio w~systemach uwierzytelniania
 w~celu utrudnienia uzyskania nieautoryzowanego dostępu do wrażliwych danych. Takie podejście pozwoli podnieść bezpieczeństwo wszystkich użytkowników,
 niezależnie od indywidualnych preferencji i~nawyków.
+
+Jedną z~możliwości zwiększenia bezpieczeństwa jest użycie Negatywnej Bazy Danych ($NDB$), reprezentującej ukrytą informację w~postaci jawnej negatywnej.
+Odzyskanie tak zakodowanych danych jest problemem o~złożoności SAT.
+\\
+Celem niniejszej pracy jest:
+\begin{itemize}
+    \item Wykonanie testów algorytmów generacji Negatywnych Baz Danych z~zastosowaniem solwerów SAT.
+    \item Implementacja systemu uwierzytelniania oferującego większe bezpieczeństwo
+    niż standardowy schemat generowania skrótu hasła za pomocą funkcji generacji klucza (np. \textit{PBKDF2}, \textit{bcrypt})
+    i~przechowywaniu w~standardowej (pozytywnej) bazie danych.
+\end{itemize} 
  
-Założeniem systemu jest zamienienie reprezentacji w~sposób jawny na Negatywną Bazę Danych ($NDB$) co pozwoli dodać 
+ 
+Założeniem systemu jest zamienienie reprezentacji w~sposób jawny na Negatywną Bazę Danych, co pozwoli dodać 
 dodatkową warstwę bezpieczeństwa która znacząco utrudni uzyskanie haseł użytkownika w~przypadku kradzieży bazy danych.
 
 W~tym celu opisałem różne algorytmy prezentowane w~dostępnej literaturze, przedstawiłem schemat ich działania i~porównałem

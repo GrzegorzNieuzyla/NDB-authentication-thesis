@@ -51,7 +51,7 @@
 \def\degreeprogramme#1 {\gdef\@degreeprogramme{#1}}
 
 
-\linespread{1.3}
+\linespread{1.25}
 \renewcommand{\labelitemi}{--}
 
 %------------------------------------------------------------------------------
@@ -96,11 +96,11 @@ Supervisor: & {\itshape \@supervisor}\\
 
 \vspace*{2mm}
 
-{\sffamily{\large{\bfseries{\scshape Akademia G\'{o}rniczo-Hutnicza im. Stanis\l{}awa Staszica w Krakowie}}}
+{\sffamily{{\bfseries{\scshape Akademia G\'{o}rniczo-Hutnicza im. Stanis\l{}awa Staszica w~Krakowie}}}
 
 \vspace*{1mm}
 
-{\small\bfseries \MakeUppercase{\@faculty}}}
+{\small \textbf{\@faculty}}}
 \vspace*{3mm}
 
 {\small{\MakeUppercase{\@department}}}

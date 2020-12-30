@@ -50,8 +50,8 @@ składując skróty jako rekordy w~NDB uniemożliwiamy łatwą iterację wszystk
 Najprostszym ze sposobów generowania Negatywnych Baz Danych jest zaproponowany przez Fernando Esponda 
 algorytm prefiksowy \cite{NRI-Esponda, Esponda2004EnhancingPT}. Został on opracowany w~celu udowodnienia
 że proces generowania NDB z~rekordów $DB$ jest możliwy w~rozsądnej złożoności czasowej i~pamięciowej.
-\\\\\\
-\begin{algorithm}[H]
+
+\begin{algorithm}[!htb]
     \SetAlgoLined
     \SetAlgorithmName{Algorytm}{}{}
     \KwData{$DB$ - zbiór rekordów do zareprezentowania w~NDB, $l$ - długość rekordu $DB$}
@@ -73,14 +73,12 @@ algorytm prefiksowy \cite{NRI-Esponda, Esponda2004EnhancingPT}. Został on oprac
     \caption{Algorytm prefiksowy}
     \label{alg:prefix}
 \end{algorithm}
-~\\\\
-
 
 Powyższa metoda polega na generowaniu coraz dłuższych prefiksów które nie pokrywają się ze zbiorem $DB$.
 W ten sposób na początku tworzone są rekordy odpowiadające znacznej części $U~-~DB$. Czasami występuje potrzeba zdefiniowania pewnych rekordów explicite bez wykorzystania symbolu $*$ jeżeli każdy możliwy prefiks jest także prefiksem rekordu z~$DB$. 
 Przykładowy wynik działania znajduje się w~tabeli \ref{tbl:prefix_results}.
 
-\begin{table}[h]
+\begin{table}[!h]
     \centering
     \begin{tabular}{|l|l|l|}
         \hline
@@ -102,12 +100,10 @@ Przykładowy wynik działania znajduje się w~tabeli \ref{tbl:prefix_results}.
     \label{tbl:prefix_results}
 \end{table}
 
-
-
 Algorytm prefiksowy jest deterministyczny i~każdy powstały rekord reprezentuje unikalną, nie pokrywającą się część $U~-~DB$ \cite{NRI-Esponda}.
 Powoduje to, że algorytm uzyskiwania zbioru $DB$ z~otrzymanej $NDB$ nie wymaga sprowadzenia do problemu SAT. Wystarczy jedynie odpowiednio posortować rekordy i~wyznaczyć przedziały pomiędzy nimi, co pokazuję w algorytmie \ref{alg:prefix-reverse}.
 
-\begin{algorithm}[H]
+\begin{algorithm}[!htb]
     \SetAlgoLined
     \SetAlgorithmName{Algorytm}{}{}
     \KwData{$NDB$ - zbiór rekordów do odwrócenia, $l$ - długość rekordu $NDB$}
@@ -128,7 +124,7 @@ Powoduje to, że algorytm uzyskiwania zbioru $DB$ z~otrzymanej $NDB$ nie wymaga 
     \label{alg:prefix-reverse}
 \end{algorithm}
 
-\begin{algorithm}[H]
+\begin{algorithm}[!htb]
     \SetAlgoLined
     \SetAlgorithmName{Algorytm}{}{}
     \KwData{$V_1, V_2$ - rekordy $DB$}
@@ -148,7 +144,7 @@ Czas wykonywania procedury generacyjnej wynosi $O(l|DB|)$, jednak w~przypadku za
 Złożoność pamięciowa dla optymalnej implementacji wynosi $O(l|DB|)$ w~przypadku gdy poprzednio generowane rekordy $NDB$ nie są przetrzymywane w~pamięci. 
 Dla danego zbioru $DB$ generowane jest $O(l|DB|)$ rekordów co sprowadza się do wielkości powstałej bazy danych wynoszącej $O(l^2|DB|)$.
 
-Przestawiony powyżej algorytm odwracający (\ref{alg:prefix-reverse}) wykonuje się w~czasie $O(|NDB|)=~O(l|DB|)$ co jest wynikiem lepszym od procedury generacyjnej z zapisem do bazy.
+Przestawiony algorytm odwracający (\ref{alg:prefix-reverse}) wykonuje się w~czasie $O(|NDB|)=~O(l|DB|)$ co jest wynikiem lepszym od procedury generacyjnej z zapisem do bazy.
 
 \subsection{Algorytm \textit{Randomize\_NDB}}
 Algorytm prefiksowy generuje poprawne rekordy $NDB$, jednak nie jest praktyczny w~żadnych zastosowaniach związanych
@@ -157,7 +153,7 @@ Aby temu zaradzić, Fernando Esponda w~swojej pracy\cite{NRI-Esponda} zaproponow
 niedeterministyczny algorytm mający na celu wprowadzić rekordy które nie odpowiadają jedynie prefiksom elementów
 z $U - DB$ i~są trudniejsze do odwrócenia.
 
-\begin{algorithm}[H]
+\begin{algorithm}[!htb]
     \SetAlgoLined
     \SetAlgorithmName{Algorytm}{}{}
     \KwData{$DB$ - zbiór rekordów do zareprezentowania w~NDB, $l$ - długość rekordu $DB$}
@@ -193,7 +189,7 @@ z $U - DB$ i~są trudniejsze do odwrócenia.
     \caption{Algorytm \textit{Randomize\_NDB}}
     \label{alg:randomize}
 \end{algorithm}
-~\\\\
+
 Algorytm ten działa na podobnej zasadzie co algorytm prefiksowy (rozdział \ref{sec:prefix-alg}) z~pewnymi modyfikacjami.
 Na początku kolejność bitów w~$DB$ jest mieszana za pomocą losowej permutacji aby pozycje zdefiniowane w~generowanej prefiksowej $NDB$ nie były skumulowane na początku wyrazów. Następnie dla każdego powstałego negatywnego rekordu losuje się $n$ pozycji nieustalonych i~zastępuje się go równoznacznym zbiorem rekordów które mają te pozycje ustalone. 
 Powstałe ciągi są dodatkowo zaciemniane przez wstawienie na losowych pozycjach zamiast bitu zdefiniowanego znak $*$ zgodnie z~algorytmem \textit{Pattern\_Generate}.
@@ -236,9 +232,7 @@ Wynik algorytmu jest niedeterministyczny co powoduje że dla takich samych zbior
     \caption{Algorytm Pattern\_Generate}
     \label{alg:pattern-generate}
 \end{algorithm}
-~\\\\\\
 
-\newpage
 Zmiany względem algorytmu prefiksowego oraz procedura \textit{Pattern\_Generate} gwarantują że żaden ze zmodyfikowanych rekordów nie będzie odpowiadał żadnemu elementowi $DB$ oraz że wynik działania pozostanie kompletnym odzwierciedleniem $U - DB$,
 ponieważ każda modyfikacja rekordu rozszerza zakres pokrywanych ciągów wprowadzając redundantne informacje.
 W \cite{NRI-Esponda} przedstawiony jest dowód że problem rekonstrukcji $DB$ z~$NDB$ jest NP-trudny (każdą instancję 3-SAT można sprowadzić do $NDB$).
@@ -269,15 +263,14 @@ Prawdopodobieństwo uzyskania trudnej do złamania kombinacji rekordów jest bar
     \label{tbl:randomized_results}
 \end{table}
 
-\newpage
+
 \subsection{Algorytm \textit{0-Hidden}}
 \label{sec:0hidden}
 Następujące algorytmy powstały przez zastosowanie procedur generowania trudnych instancji SAT.
 Jedną z~nich jest \textbf{0-Hidden} służąca do generacji formuł 3-SAT nie posiadających rozwiązania, co pozwala na testowanie solwerów 
 pod względem wykrywania braku spełnialności \cite{GeneratingHardFormulasByHidingSolutionsDeceptively}.
 
- ~\\\\
- \begin{algorithm}[H]
+ \begin{algorithm}[!htb]
      \SetAlgoLined
      \SetAlgorithmName{Algorytm}{}{}
      \KwData{$l$ - liczba zmiennych, $r$ - współczynnik ilości klauzul}
@@ -295,7 +288,7 @@ pod względem wykrywania braku spełnialności \cite{GeneratingHardFormulasByHid
      \caption{Algorytm \textit{0-Hidden}}
      \label{alg:0hidden}
  \end{algorithm}
- ~\\\\
+
 Powyższy algorytm generuje formułę CNF, która z~dużym prawdopodobieństwem nie jest spełnialna i~jest trudna do rozwiązania przez solwery SAT \cite{GeneratingHardFormulasByHidingSolutionsDeceptively, HidingSatisfyingAssignmentsTwoAreBetterThanOne}.
 Modyfikując parametr $r$ możemy wpłynąć na rozmiar formuły, wartość $r \approx 4.27$ jest wartością graniczną powyżej której problem prawie na pewno nie ma rozwiązania \cite{GeneratingHardFormulasByHidingSolutionsDeceptively}.
 
@@ -319,8 +312,8 @@ Powyższy schemat działania jest wykorzystany w~procedurze \textit{\textbf{Q-Hi
   Oznacza to że im mniejsza wartość $q$ tym bardziej formuła będzie wskazywać w~przeciwnym kierunku niż ukryte rozwiązanie $A$. 
   
   Na podstawie tego schematu powstał algorytm mający na celu rozwiązanie problemów z~algorytmami prefiksowym i~Randomize\_NDB tj. generowanie zbiorów rekordów które łatwo odwrócić za pomocą solwerów SAT\cite{HARD-NDB}
-\\\\\\
- \begin{algorithm}[H]
+
+ \begin{algorithm}[!htb]
     \SetAlgoLined
     \SetAlgorithmName{Algorytm}{}{}
     \KwData{$s$ - ciąg bitowy, $l$ - długość rekordu, $r$ - wsp. ilości klauzul\\ $k$ - ilość ustalonych bitów w~klauzuli, $q$ - wsp. prawdopodobieństwa}
@@ -418,7 +411,7 @@ różnych typów klauzul -~w~zależności od liczby pokrywających się bitów z
 
 
 
- \begin{algorithm}[H]
+ \begin{algorithm}[!htb]
     \SetAlgoLined
     \SetAlgorithmName{Algorytm}{}{}
     \KwData{$s$ - ciąg bitowy, $l$ - długość rekordu, $r$ - wsp. ilości klauzul\\ $k$ - ilość ustalonych bitów w~klauzuli, $\{p_1 \dots p_k\}$ - wsp. prawdopodobieństwa}
@@ -469,41 +462,6 @@ będzie odporna na odwrócenie.  Baza wynikowa jest równoważna formule 3-CNF.
     \label{alg:hybrid}
 \end{algorithm}
 
-Proces generacji składa się z~dwóch etapów. Pierwszy, procedura \textit{GenComplete}, tworzy kompletny zbiór $l + 4$ rekordów pokrywający
-całe $U - \{s\}$. Na początku tworzy $l-2$ rekordy kolejno zaprzeczając każdemu bitowi oprócz dwóch ostatnich
-i~losuje dwie dodatkowe pozycje przed nim ustawiając je zgodnie~z~$s$.
-Następnie generuje dwa rekordy dla różniącej się pozycji drugiej i~cztery dla pierwszej.
-
-$NDB$ jest tworzona dla losowej permutacji napisu $s$~a~następnie każdy rekord 
-jest przekształcany z~powrotem przez permutację odwrotną w~celu utrudnienia analizy przez pomieszanie kolejności bitów.
-
-W kolejnym etapie tworzone są pozostałe $l*r - (l+4)$ rekordy przez zastosowanie procedury \textit{MakeHardReverse} (Algorytm \ref{alg:hybrid-makehard}) - równoznacznej
-\textit{Q-Hidden} dla $k=3$. 
-
-Wynik działania tej metody dla nieznanego napisu $s$ jest nierozróżnialny od baz utworzonych przez algorytmy \textit{0-Hidden}, \textit{1-Hidden},
-\textit{2-Hidden}, \textit{Q-Hidden} i~\textit{K-Hidden} przy $k = 3$ i~identycznym $r$. Różnić się będą jedynie rozkładem pozycji
-ustalonych zgodnych i~niezgodnych z~ukrytym napisem.
-
-\begin{table}[!tb]
-    \centering
-    \begin{tabular}{|l|}
-    	\hline
-    	\textbf{11000} \\ \hline
-    	*1*01          \\
-    	1*01*          \\
-    	111**          \\
-    	100**          \\
-    	101**          \\
-    	0**00          \\
-    	0**10          \\
-    	0**01          \\
-    	0**11          \\ \hline
-    \end{tabular}
-    \caption{Rezultat działania procedury \textit{GenComplete} dla $\pi(s) = 11000$ przed zastosowaniem permutacji odwrotnej na rekordach}
-    \label{tbl:gencomplete_results}
-\end{table}
-
-
 \begin{algorithm}[!htb]
     \SetAlgoLined
     \SetAlgorithmName{Algorytm}{}{}
@@ -543,7 +501,7 @@ ustalonych zgodnych i~niezgodnych z~ukrytym napisem.
 \end{algorithm}
 
 
-\begin{algorithm}[H]
+\begin{algorithm}[!htb]
     \SetAlgoLined
     \SetAlgorithmName{Algorytm}{}{}
     \KwData{$s$ - ciąg bitowy, $l$ - długość rekordu, $r$ - wsp. ilości klauzul\\~~~~~~~~~~ $q$ - wsp. prawdopodobieństwa}
@@ -581,6 +539,40 @@ ustalonych zgodnych i~niezgodnych z~ukrytym napisem.
     \label{alg:hybrid-makehard}
 \end{algorithm}
 
+Proces generacji składa się z~dwóch etapów. Pierwszy, procedura \textit{GenComplete}, tworzy kompletny zbiór $l + 4$ rekordów pokrywający
+całe $U - \{s\}$. Na początku tworzy $l-2$ rekordy kolejno zaprzeczając każdemu bitowi oprócz dwóch ostatnich
+i~losuje dwie dodatkowe pozycje przed nim ustawiając je zgodnie~z~$s$.
+Następnie generuje dwa rekordy dla różniącej się pozycji drugiej i~cztery dla pierwszej.
+
+$NDB$ jest tworzona dla losowej permutacji napisu $s$~a~następnie każdy rekord 
+jest przekształcany z~powrotem przez permutację odwrotną w~celu utrudnienia analizy przez pomieszanie kolejności bitów.
+
+W kolejnym etapie tworzone są pozostałe $l*r - (l+4)$ rekordy przez zastosowanie procedury \textit{MakeHardReverse} (Algorytm \ref{alg:hybrid-makehard}) - równoznacznej
+\textit{Q-Hidden} dla $k=3$. 
+
+Wynik działania tej metody dla nieznanego napisu $s$ jest nierozróżnialny od baz utworzonych przez algorytmy \textit{0-Hidden}, \textit{1-Hidden},
+\textit{2-Hidden}, \textit{Q-Hidden} i~\textit{K-Hidden} przy $k = 3$ i~identycznym $r$. Różnić się będą jedynie rozkładem pozycji
+ustalonych zgodnych i~niezgodnych z~ukrytym napisem.
+
+
+\begin{table}[!tb]
+    \centering
+    \begin{tabular}{|l|}
+        \hline
+        \textbf{11000} \\ \hline
+        *1*01          \\
+        1*01*          \\
+        111**          \\
+        100**          \\
+        101**          \\
+        0**00          \\
+        0**10          \\
+        0**01          \\
+        0**11          \\ \hline
+    \end{tabular}
+    \caption{Rezultat działania procedury \textit{GenComplete} dla $\pi(s) = 11000$ przed zastosowaniem permutacji odwrotnej na rekordach}
+    \label{tbl:gencomplete_results}
+\end{table}
 
 \section{Wykorzystywanie solwerów SAT w~celu uzyskania przeciwobrazu Negatywnej Bazy Danych}
 
